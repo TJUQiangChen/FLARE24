@@ -65,32 +65,18 @@ Firstly, prepare a dataset of 250 images with 13-organ labels. Use this dataset 
 nnUNetv2_train TASK_ID 3d_fullres all -tr STUNetTrainer_large
 ```
 
-### Step 2: Generate Pseudo Labels for Step2 
-With the model trained in Step 1, generate pseudo labels for 1494 tumor-annotated images.
+### Step 2: 训练Big SegNet
+
 
 ```bash
 nnUNetv2_predict -i INPUT_FOLDER -o OUTPUT_FOLDER -d TASK_ID -c 3d_fullres -f all -tr STUNetTrainer_large
 ```
 
-### Step 3: Merge Labels and Train Large Model
+### Step 3: 训练 Small SegNet
 Merge the pseudo organ labels and actual tumor labels in 1497 images, and then train a large model using this merged dataset.
 
 ```bash
 nnUNetv2_train TASK_ID 3d_fullres all -tr STUNetTrainer_large
-```
-
-### Step 4: Generate Pseudo Labels for All Images
-Using the model trained in Step 3, generate pseudo labels for all 4000 images in the dataset.
-
-```bash
-nnUNetv2_predict -i INPUT_FOLDER -o OUTPUT_FOLDER -d TASK_ID -c 3d_fullres -f all -tr STUNetTrainer_large
-```
-
-### Step 5: Train Small Model for Deployment
-Finally, train a small model on the dataset of 4000 images. This model will be used for deployment.
-
-```bash
-nnUNetv2_train TASK_ID 3d_fullres all -tr STUNetTrainer_base
 ```
 
 You can download trained models here:

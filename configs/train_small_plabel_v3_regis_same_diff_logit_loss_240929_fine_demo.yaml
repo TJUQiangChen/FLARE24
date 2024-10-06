@@ -1,0 +1,45 @@
+BASE: ['train_base.yaml']
+
+TRAINING_TYPE: 'fine'
+
+DATASET:
+  BASE_DIR: "/ChenQiang/DataSet/Medical/MICCAI24_FLARE/Dataset"
+  DATASET_NAME: 'CT_PlabelV3_regis_same_diff_fine_a800_logit_loss_drop_demo'
+  FINE:
+    SPLIT_PREPROCESS_PATH: [
+      'TPH_processed_data/fine/small_network_base/CT300_mlabel',
+#      'TPH_processed_data/fine/small_network_base/MR_lld_plabel_v3_regis_same_softmax',
+      'TPH_processed_data/fine/small_network_base/CT2000_plabel',
+      'TPH_processed_data/fine/small_network_base/MR_amos_plabel_v_regis_diff_softmax_demo',
+      'TPH_processed_data/fine/small_network_base/MR_lld_plabel_v_regis_diff_softmax_demo',
+    ]
+    PROPRECESS_PATH: "TPH_processed_data/fine/combined_data/small_CT_PLABLE_v3_regis_same_diff_fine_a800_logit_loss_drop_demo"
+    SIZE: [96, 192, 192]
+
+DATALOADER:
+  BATCH_SIZE: 1
+  NUM_WORKERS: 10
+
+MODEL:
+  FINE:
+    BASE_NUM_FEATURES: 16
+    MAX_NUM_FEATURES: 200
+    DEPTHS: [2, 2, 2, 2]
+    NUM_HEADS: [4, 4, 4, 4]
+    WINDOW_SIZE: [3, 4, 4]
+    MLP_RATIO: 1.
+    DROP_PATH_RATE: 0.1
+
+TRAIN:
+  EPOCHS: 300
+  MULTI_TASK:
+    IS_OPEN: False
+    CLASS_NUM: 2
+  SELECT_IMPORT_VOXEL:
+    IS_OPEN: True
+    DROP_VOXEL: True
+    UPDATE_LOSS_WEIGHT: False
+    IGNORE_LABEL: 255
+
+  LOSS:
+    FLARE24_CHANGE_WEIGHT: False
