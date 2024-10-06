@@ -124,7 +124,7 @@ Our method achieves the following performance on [FLARE24](https://www.codabench
 
 
 
-## 💕 项目成员 <a id="项目成员"></a>
+## 💕 Members
 #TODO
 - [xx](xx) 
 
@@ -136,9 +136,8 @@ todo
 
 ## Contributing
 
-## 🉑开源许可证 <a id="开源许可证"></a>
-
 该项目采用 [Apache License 2.0 开源许可证](LICENSE) 同时，请遵守所使用的模型与数据集的许可证。
+
 ## Acknowledgement
 
  We thank the contributors of [public FLARE24 datasets](?).
