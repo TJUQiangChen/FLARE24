@@ -35,30 +35,31 @@ The CT scans are from the FLARE 2022 dataset where 50 cases have ground-truth la
 
 2.The two MR datasets 'AMOS_MR_good_spacing-833' and 'LLD-MMRI-3984' should both be placed under the MR/Training directory.
 ```
-|-- CT
-|   |-- CT2MR_image
-|   |-- CT_image
-|   `-- CT_label
-|-- MR
-|   |-- PublicValidation
-|   |   |-- imagesVal
-|   |   `-- labelsVal
-|   `-- Training
-|       |-- AMOS_MR_good_spacing-833
-|       |-- LLD-MMRI-3984
-|       |-- PLabel
-|       |-- PLabel_image
-|       |-- preprocess_data_pair
-|       `-- regis_data
-|-- processed_data
-|   |-- coarse
-|   |   |-- combined_data
-|   |   `-- small_segnet
-|   `-- fine
-|       |-- big_segnet
-|       |-- combined_data
-|       `-- small_segnet
-`-- static_info
+|-- datasets
+|   |-- CT
+|   |   |-- CT2MR_image
+|   |   |-- CT_image
+|   |   `-- CT_label
+|   |-- MR
+|   |   |-- PublicValidation
+|   |   |   |-- imagesVal
+|   |   |   `-- labelsVal
+|   |   `-- Training
+|   |       |-- AMOS_MR_good_spacing-833
+|   |       |-- LLD-MMRI-3984
+|   |       |-- PLabel
+|   |       |-- PLabel_image
+|   |       |-- preprocess_data_pair
+|   |       `-- regis_data
+|   |-- processed_data
+|   |   |-- coarse
+|   |   |   |-- combined_data
+|   |   |   `-- small_segnet
+|   |   `-- fine
+|   |       |-- big_segnet
+|   |       |-- combined_data
+|   |       `-- small_segnet
+|   `-- static_info
 ```
 
 ## 🪄 Preprocessing
@@ -71,6 +72,7 @@ For Step 1 Domain Translation
 Domain Translation code will comming soon
 
 # For original CT images, you can use the following command for data preprocessing (for images after domain transfer, refer to the config to modify the path for data preprocessing)
+
 python ./preprocess/data_preprocess.py --cfg ./configs/preprocess/preprocess_step1_CT.yaml
 ```
 For Step 2 self-Training Strategy and Step 3 Two-Stage Segmentation preprocess model trained data.
