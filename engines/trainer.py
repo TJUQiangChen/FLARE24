@@ -17,8 +17,6 @@ class Trainer:
        
         self.scaler = torch.cuda.amp.GradScaler(enabled=True)
         self.losses = losses
-        # self.loss_ct = loss_ct
-        # self.loss_mr = loss_mr
         self.model = model
         self.train_loader = train_loader
         self.val_loader = val_loader
@@ -82,7 +80,7 @@ class Trainer:
 
             with torch.cuda.amp.autocast(enabled=self.config.AMP):
 
-                # TODO: chen  24.08.20 新添加特效。增加一个模态分类任务
+                # New feature added. A modality classification task has been added.
                 if self.config.TRAIN.MULTI_TASK.IS_OPEN:
                     if flag[0] == 1:
                         pre, modality_pre = self.model(img, True)
@@ -90,7 +88,7 @@ class Trainer:
                     else:
                         pre, modality_pre = self.model(img, False)
                         loss = self.losses['mr'](pre, gt)
-                    # 需要检查
+                    # TODO: need check
                     class_gt = one_hot(to_cuda(data_infos["modality"]), num_classes=self.config.TRAIN.MULTI_TASK.CLASS_NUM)
                     loss = loss + self.losses['center_class'](modality_pre, class_gt.float())
                 else:
@@ -100,11 +98,6 @@ class Trainer:
                     else:
                         pre = self.model(img, False)
                         loss = self.losses['mr'](pre, gt)
-
-
-
-                # pre_aug = self.model(img_aug)
-                # loss_aug = self.loss(pre_aug, gt_aug)
 
                 loss = loss
                     
@@ -193,7 +186,7 @@ class Trainer:
             "optimizer": self.optimizer.state_dict(),
             "config": self.config,
         }
-        # ��ӱ��浱ǰ��epoch��pth
+
         filename = os.path.join(self.checkpoint_dir, "{}_checkpoint.pth".format(epoch))
         logger.info(f"Saving a checkpoint: {filename} ...")
         torch.save(state, filename)
@@ -211,15 +204,13 @@ class Trainer:
 
         checkpoint = torch.load(checkpoint_path)
 
-        # 加载模型参数
+        # load model checkpoint
         self.model.load_state_dict(checkpoint["state_dict"])
         print(f"Loaded model from checkpoint at '{checkpoint_path}'")
-        # 如果提供了优化器，则加载优化器状态
+        # load optimizer parameters
         if self.optimizer is not None and not is_fintune:
             self.optimizer.load_state_dict(checkpoint["optimizer"])
             print(f"Loaded optimizer state from checkpoint at '{checkpoint_path}'")
-
-        # 返回上次训练的epoch
         start_epoch = checkpoint["epoch"]
         print(f"Resuming training from epoch {start_epoch}")
 

@@ -77,18 +77,7 @@ class MultipleOutputLoss2(nn.Module):
                 l += weights[i] * self.loss(x[i], y[i])
         return l
 
-# class RobustCrossEntropyLossFLARE24(nn.CrossEntropyLoss):
-#
-#     def forward(self, input: Tensor, target: Tensor) -> Tensor:
-#         if len(target.shape) == len(input.shape):
-#             assert target.shape[1] == 1
-#             target = target[:, 0]
-#
-#         weight = torch.FloatTensor(14).zero_().cuda() + 1
-#         for i in range(14):
-#             if i in [7,8,9,10,12]:
-#                 weight[i] = 7
-#         return super().forward(input, target.long(), weight=weight)
+
 class RobustCrossEntropyLoss(nn.CrossEntropyLoss):
 
     def forward(self, input: Tensor, target: Tensor) -> Tensor:
@@ -121,18 +110,17 @@ class DC_and_CE_ignore_edge_loss(nn.Module):
             target[~mask] = 0
             mask = mask.float()
         else:
-            # TODO:ChenQiang:边缘区域不计算loss
+            # Do not calculate loss for edge areas.
             mask = torch.ones_like(target)
 
-        # TODO:ChenQiang:边缘区域不计算loss
-        # 生成膨胀掩码
+        # Generate an expanded mask
         structuring_element = torch.ones(1, 1, self.ignore_edge_kernel_size, self.ignore_edge_kernel_size, self.ignore_edge_kernel_size).to(target.device)
         dilated_mask = F.conv3d((target>0).float(), structuring_element, padding=(self.ignore_edge_kernel_size-1)/2)
 
-        # 确定掩码边缘区域
+        # Determine the mask edge area
         boundary_mask = (dilated_mask > 0) & (dilated_mask < structuring_element.sum().item())
         boundary_mask = boundary_mask.float()
-        # 边缘区域权重为0
+        # The weight of the edge area is 0.
         mask[boundary_mask == 1] = 0
         for flag_idx in range(flags.shape[0]):
             if flags[flag_idx] == 0:
@@ -152,7 +140,6 @@ class DC_and_CE_ignore_edge_loss(nn.Module):
         if self.aggregate == "sum":
             result = self.weight_ce * ce_loss + self.weight_dice * dc_loss
         else:
-            # reserved for other stuff (later)
             raise NotImplementedError("nah son")
         return result
 
@@ -182,7 +169,6 @@ class DC_and_CE_loss(nn.Module):
             else:
                 self.ce = RobustCrossEntropyLoss()
 
-        # self.ignore_label = ignore_label
         self.dc = SoftDiceLoss(apply_nonlin=softmax_helper)
 
     def forward(self, net_output, target):
@@ -192,7 +178,6 @@ class DC_and_CE_loss(nn.Module):
             target[~mask] = 0
             mask = mask.float()
         else:
-            # TODO:ChenQiang:边缘区域不计算loss
             mask = torch.ones_like(target)
 
         dc_loss = self.dc(net_output, target,
@@ -209,7 +194,6 @@ class DC_and_CE_loss(nn.Module):
         if self.aggregate == "sum":
             result = self.weight_ce * ce_loss + self.weight_dice * dc_loss
         else:
-            # reserved for other stuff (later)
             raise NotImplementedError("nah son")
         return result
 

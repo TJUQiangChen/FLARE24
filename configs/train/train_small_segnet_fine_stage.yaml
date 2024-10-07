@@ -1,0 +1,32 @@
+BASE: ["train_base.yaml"]
+TRAINING_TYPE: 'fine'
+
+DATASET:
+  DATASET_NAME: 'CT_fakeMR_fine'
+  FINE:
+    SPLIT_PREPROCESS_PATH: [
+      'processed_data/fine/big_segnet/ct300',
+      'processed_data/fine/big_segnet/MR_lld_stage3',
+      'processed_data/fine/big_segnet/MR_amos_stage3',
+    ]
+    PROPRECESS_PATH: "processed_data/fine/combined_data/small_segnet_fine"
+    SIZE: [ 96, 192, 192 ]
+    PREPROCESS_SIZE: [ 192, 192, 96 ]
+
+
+MODEL:
+  FINE:
+    BASE_NUM_FEATURES: 16
+    MAX_NUM_FEATURES: 200
+    DEPTHS: [2, 2, 2, 2]
+    NUM_HEADS: [4, 4, 4, 4]
+    WINDOW_SIZE: [3, 4, 4]
+    MLP_RATIO: 1.
+    DROP_PATH_RATE: 0.1
+
+TRAIN:
+  SELECT_IMPORT_VOXEL:
+    IS_OPEN: True
+    DROP_VOXEL: True
+    UPDATE_LOSS_WEIGHT: False
+    IGNORE_LABEL: 255

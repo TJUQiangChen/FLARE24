@@ -38,11 +38,12 @@ _C.WANDB.MODE = "offline"
 # Real MR Data Preprocess(pseduo label)
 # -----------------------------------------------------------------------------
 _C.MR_DATA_PREPROCESS = CN()
-# stage1 - preprocess
+#  preprocess
+_C.MR_DATA_PREPROCESS.STAGE = 1
 _C.MR_DATA_PREPROCESS.ROOT_PATH = ""
 _C.MR_DATA_PREPROCESS.MR_RAW_DATA_PATH = ""
 _C.MR_DATA_PREPROCESS.PSUEDO_LABEL_PATH = ""  # inference psuedo label path
-_C.MR_DATA_PREPROCESS.LLD_TEMP_MR_RAW_DATA_PATH = ""  # filter C+Delay data
+_C.MR_DATA_PREPROCESS.TEMP_MR_RAW_DATA_PATH = ""  # filter C+Delay data
 _C.MR_DATA_PREPROCESS.DATA_PAIR_PATH = ""  # using symlink and rename to save Hard Disk Space. it's recoder source filename and symlink name pair. it's json file path.
 _C.MR_DATA_PREPROCESS.TEMP_PREPROCESSED_PSUEDO_LABEL_PATH = ""  # test
 
@@ -53,20 +54,17 @@ _C.MR_DATA_PREPROCESS.FILTER_CASE_SAVE_PATH = (
     ""  # save filtered case infos . it's csv file path.
 )
 
-# stage2 - preprocess
-_C.MR_DATA_PREPROCESS.PREPROCESSED_RAW_PATH = ""  # filtered bad psuedo label case
-_C.MR_DATA_PREPROCESS.PREPROCESSED_PSUEDO_LABEL_PATH = ""  #
+# preprocess
 _C.MR_DATA_PREPROCESS.BAD_CASE_PATH = (
     ""  # preprocessed fail case file. it's json file path.
 )
 
-# stage3 regis
+# regis
 _C.MR_DATA_PREPROCESS.REGIS = CN()
 _C.MR_DATA_PREPROCESS.REGIS.SOURCE_DATA_PATH = ""
 _C.MR_DATA_PREPROCESS.REGIS.TARGET_DATA_PATH = ""
 _C.MR_DATA_PREPROCESS.REGIS.OUTPUT_PATH = ""
 
-# stage4
 _C.MR_DATA_PREPROCESS.OUTPUT_MR_RAW_DATA_PATH = ""
 
 _C.MR_DATA_PREPROCESS.IS_LLD_REGIS_DATA = False
@@ -75,7 +73,6 @@ _C.MR_DATA_PREPROCESS.IS_LLD_REGIS_DATA = False
 # Data settings
 # -----------------------------------------------------------------------------
 _C.DATASET = CN()
-# _C.DATASET.TRAIN_TYPE = 'fine' # include ['coarse', 'coarse-fine', 'fine']
 _C.DATASET.WITH_VAL = False
 _C.DATASET.BASE_DIR = ""
 _C.DATASET.DATASET_NAME = "base"
@@ -87,6 +84,7 @@ _C.DATASET.TRAIN_UNLABELED_MASK_PATH = ""
 _C.DATASET.TRAIN_IMAGE_PATH = ""
 _C.DATASET.TRAIN_MASK_PATH = ""
 _C.DATASET.VAL_IMAGE_PATH = ""
+_C.DATASET.VAL_MASK_PATH = ""
 _C.DATASET.EXTEND_SIZE = 20
 _C.DATASET.IS_NORMALIZATION_DIRECTION = True
 
@@ -96,7 +94,7 @@ _C.DATASET.COARSE.PROPRECESS_PATH = ""
 _C.DATASET.COARSE.PROPRECESS_UL_PATH = ""
 _C.DATASET.COARSE.NUM_EACH_EPOCH = 512
 _C.DATASET.COARSE.SIZE = [64, 64, 64]
-_C.DATASET.COARSE.PREPROCESS_SIZE = [64, 64, 64]  # 预处理用
+_C.DATASET.COARSE.PREPROCESS_SIZE = [64, 64, 64]
 _C.DATASET.COARSE.LABEL_CLASSES = 2
 
 _C.DATASET.FINE = CN()
@@ -104,8 +102,8 @@ _C.DATASET.FINE.SPLIT_PREPROCESS_PATH = []
 _C.DATASET.FINE.PROPRECESS_PATH = ""
 _C.DATASET.FINE.PROPRECESS_UL_PATH = ""
 _C.DATASET.FINE.NUM_EACH_EPOCH = 512
-_C.DATASET.FINE.SIZE = [96, 256, 256]  # 训练用
-_C.DATASET.FINE.PREPROCESS_SIZE = [256, 256, 96]  # 预处理用
+_C.DATASET.FINE.SIZE = [96, 256, 256]  # for training
+_C.DATASET.FINE.PREPROCESS_SIZE = [256, 256, 96]  # for preprocess
 
 _C.DATASET.FINE.LABEL_CLASSES = 14
 
@@ -119,9 +117,9 @@ _C.DATASET.DA.DO_GAMMA = True
 _C.DATASET.DA.DO_MIRROR = False
 _C.DATASET.DA.DO_ADDITIVE_BRIGHTNESS = True
 
-# 是否预处理的时候进行crop
+# whether to crop during preprocessing
 _C.DATASET.IS_ABDOMEN_CROP = False
-# 是否在测试阶段将spacing改为1,1,1
+# whether to change the spacing to 1,1,1 during the test phase
 _C.DATASET.VAL_CHANGE_SPACING = False
 
 
@@ -209,7 +207,7 @@ _C.TRAIN.MIN_LR = 5e-6
 _C.TRAIN.MULTI_TASK = CN()
 _C.TRAIN.MULTI_TASK.IS_OPEN = False
 _C.TRAIN.MULTI_TASK.CLASS_NUM = 2
-# 筛选重要体素，loss方面调整
+# new loss filter import voxel
 _C.TRAIN.SELECT_IMPORT_VOXEL = CN()
 _C.TRAIN.SELECT_IMPORT_VOXEL.IS_OPEN = False
 _C.TRAIN.SELECT_IMPORT_VOXEL.DROP_VOXEL = False
@@ -237,10 +235,9 @@ _C.TRAIN.OPTIMIZER.MOMENTUM = 0.9
 
 
 #
-#  loss设计 # 忽略边缘
+#  new loss: ignore edge
 _C.LOSS = CN()
 _C.LOSS.IGNORE_EDGE = False
-# TODO:需要在代码中添加
 _C.LOSS.IGNORE_EDGE_KERNEL_SIZE = 5
 _C.LOSS.FLARE24_CHANGE_WEIGHT = False
 
@@ -260,10 +257,11 @@ _C.VAL.TTA = False
 # Inference settings
 # -----------------------------------------------------------------------------
 _C.INFERENCE = CN()
+# # Whether to overwrite the predicted mask during the inference phase, if True it will be rerun each time, if False, the i that has been run will not be rerun
 _C.INFERENCE.IS_OVERWRITE_PREDICT_MASK = (
-    True  # 在inference阶段是否覆盖之前预测结果，如果为True每次都会重跑，如果False，那么跑过的i重跑
+    True
 )
-_C.INFERENCE.SAVE_SOFTMAX = False  # 是否保存权重矩阵
+_C.INFERENCE.SAVE_SOFTMAX = False  # Whether to save the weight matrix, in order to new loss
 
 
 def _update_config_from_file(config, cfg_file):

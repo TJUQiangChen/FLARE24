@@ -1,0 +1,12 @@
+BASE: ["train_base.yaml"]
+TRAINING_TYPE: 'coarse'
+
+DATASET:
+  DATASET_NAME: 'CT_fakeMR_coarse'
+  COARSE:
+    SPLIT_PREPROCESS_PATH: [
+      'processed_data/coarse/big_segnet/ct300',
+      'processed_data/coarse/big_segnet/MR_lld_stage3',
+      'processed_data/coarse/big_segnet/MR_amos_stage3',
+    ]
+    PROPRECESS_PATH: "processed_data/coarse/combined_data/small_segnet_coarse"

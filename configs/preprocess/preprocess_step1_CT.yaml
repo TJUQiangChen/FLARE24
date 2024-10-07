@@ -1,0 +1,21 @@
+BASE: ["preprocess_base.yaml"]
+
+# stage1 - preprocess
+MR_DATA_PREPROCESS:
+  STAGE: 1
+
+INFERENCE:
+  IS_OVERWRITE_PREDICT_MASK: True
+  SAVE_SOFTMAX: False
+
+VERSION: "preprocess_step1_CT"
+
+# final stage
+DATASET:
+  TRAIN_IMAGE_PATH: 'CT/CT_train_300'
+  TRAIN_MASK_PATH: 'CT/CT_label_300'
+  IS_ABDOMEN_CROP: False
+  COARSE:
+    PROPRECESS_PATH: "processed_data/coarse/small_segnet/ct_300"
+  FINE:
+    PROPRECESS_PATH: "processed_data/fine/small_segnet/ct_300"

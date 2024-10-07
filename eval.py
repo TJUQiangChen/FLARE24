@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# ref: https://github.com/JunMa11/FLARE/blob/aad2cc2813d11135d014bf578d4f62cea84ab865/FLARE23/FLARE23_DSC_NSD_Eval.py#L4
+
 import sys
 import os
 import nibabel as nb
@@ -6,7 +8,7 @@ import numpy as np
 import glob
 import gc
 from collections import OrderedDict
-from SurfaceDice import compute_surface_distances, compute_surface_dice_at_tolerance, compute_dice_coefficient
+from engines.FLARE_EVAL.SurfaceDice import compute_surface_distances, compute_surface_dice_at_tolerance, compute_dice_coefficient
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from utils.common_function import parse_option, is_directory_only_symlinks
 
@@ -34,7 +36,7 @@ if __name__ == '__main__':
     _, config = parse_option("other")
     # Check input directories.
     submit_dir = config.VAL_OUTPUT_PATH
-    truth_dir = os.path.join(config.DATASET.BASE_DIR, "MR/PublicValidation/labelsVal")
+    truth_dir = os.path.join(config.DATASET.BASE_DIR, config.DATASET.VAL_MASK_PATH)
     if not os.path.isdir(submit_dir):
         print("submit_dir {} doesn't exist".format(submit_dir))
         sys.exit()
@@ -86,7 +88,6 @@ if __name__ == '__main__':
                                  "ground truth mask {}"
                                  "".format(submission_volume.shape,
                                            reference_volume.shape))
-        # print("Done loading files ({:.2f} seconds)".format(t()))
 
         # ----------------------- flare metrics
         seg_metrics['Name'].append(os.path.basename(reference_volume_fn))
@@ -115,11 +116,6 @@ if __name__ == '__main__':
                     NSD_i = compute_surface_dice_at_tolerance(surface_distances, label_tolerance[organ])
             seg_metrics['{}_DSC'.format(organ)].append(round(DSC_i, 4))
             seg_metrics['{}_NSD'.format(organ)].append(round(NSD_i, 4))
-            # print(name, organ, round(DSC_i,4), 'tol:', label_tolerance[organ], round(NSD_i,4))
-        # ----------------------- flare metrics
-
-        # print("Done processing volume (total time: {:.2f} seconds)"
-        #       "".format(t.total_elapsed()))
         gc.collect()
 
     overall_metrics = {}

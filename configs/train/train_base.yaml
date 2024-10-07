@@ -1,12 +1,13 @@
-
-
 TRAINING_TYPE: 'fine'
+FINE_MODEL_PATH: "" # The path of the downloaded checkpoint directory.
+CHECK_POINT_NAME: "fine_checkpoint.pth"
+COARSE_MODEL_PATH: "" # The path of the downloaded checkpoint directory.
+COARSE_CHECK_POINT_NAME: "coarse_checkpoint.pth"
+FINETUNE: False
 
 DATASET:
-  DATASET_NAME: 'PlabelV1'
-  BASE_DIR: "/ChenQiang/DataSet/Medical/MICCAI24_FLARE/Dataset"
-  FINE:
-    PROPRECESS_PATH: "Preprocess_CT_FAKEMR/PLABEL_V1"
+  DATASET_NAME: 'Raw'
+  BASE_DIR: "" # The path of the current project datasets directory.
   DA:
     DO_MIRROR: True
 

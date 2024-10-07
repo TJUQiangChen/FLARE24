@@ -1,0 +1,15 @@
+BASE: ["preprocess_step2_amos.yaml"]
+
+VERSION: "preprocess_step3_amos_fine"
+
+# final stage
+DATASET:
+  TRAIN_IMAGE_PATH: 'MR/Training/PLabel_image/AMOS_MR_good_spacing-833'
+  TRAIN_MASK_PATH: 'MR/Training/PLabel/AMOS_MR_good_spacing-833'
+  IS_ABDOMEN_CROP: False
+  COARSE:
+    PROPRECESS_PATH: "processed_data/coarse/small_segnet/MR_amos_stage3"
+  FINE:
+    PROPRECESS_PATH: "processed_data/fine/small_segnet/MR_amos_stage3"
+    SIZE: [ 96, 192, 192 ]
+    PREPROCESS_SIZE: [ 192, 192, 96 ]

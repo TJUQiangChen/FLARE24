@@ -1,0 +1,27 @@
+BASE: ['eval_base.yaml']
+
+VAL_OUTPUT_PATH: "" # The path of inference output directory.
+
+DATASET:
+  DATASET_NAME: "eval_demo"
+  VAL_IMAGE_PATH: 'MR/PublicValidation/imagesVal'
+  VAL_MASK_PATH: 'MR/PublicValidation/labelsVal'
+  VAL_CHANGE_SPACING: False
+  DA:
+    DO_MIRROR: False
+  FINE:
+    SIZE: [ 96, 192, 192 ]
+    PREPROCESS_SIZE: [ 192, 192, 96 ]
+
+MODEL:
+  FINE:
+    BASE_NUM_FEATURES: 16
+    MAX_NUM_FEATURES: 200
+    DEPTHS: [2, 2, 2, 2]
+    NUM_HEADS: [4, 4, 4, 4]
+    WINDOW_SIZE: [3, 4, 4]
+    MLP_RATIO: 1.
+    DROP_PATH_RATE: 0.1
+
+INFERENCE:
+  IS_OVERWRITE_PREDICT_MASK: False

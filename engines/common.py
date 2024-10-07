@@ -61,7 +61,6 @@ VAL_INFOS = {
     "global_avg_dice": [],
 }
 
-# 穷举
 MODALITY_PAIR = {
     "default": "0000",
     "C+A": "0001",
@@ -78,18 +77,19 @@ MODALITY_PAIR = {
 
 def extract_modality_id(filename):
     """
-    从给定的文件名中提取模态。
-    文件名可能是以下几种形式：
-    1. MR129136_1_C+A_0000.nii.gz ，模态是C+A
-    2. MR-391135_1_C+A_0000.nii.gz, 模态是C+A
-    3. amos_7427_0000.nii.gz，模态是default
+    Extract the modality from the given filenames.
+    Filenames may take the following forms:
+
+    MR129136_1_C+A_0000.nii.gz, the modality is C+A
+    MR-391135_1_C+A_0000.nii.gz, the modality is C+A
+    amos_7427_0000.nii.gz, the modality is default
     """
-    # 检查文件名是否包含已知模态
+    # Check if the filename contains a known modality.
     for modality in MODALITY_PAIR.keys():
         if modality in filename:
             return MODALITY_PAIR[modality]
 
-    # 如果没有找到已知模态，则默认为"default"
+    # If no known modality is found, default to "default".
     return "0000"
 
 
@@ -108,7 +108,7 @@ def merge_tph_processed_data_img_and_label(path_info, output_prefix="default"):
 
         os.makedirs(output_data_path, exist_ok=True)
 
-        # 获取train_image中的文件名
+        # get the filename which in 'train_image'
         image_files = sorted(
             [f for f in os.listdir(train_image_path) if f.endswith(".npz")]
         )
@@ -131,8 +131,8 @@ def merge_tph_processed_data_img_and_label(path_info, output_prefix="default"):
                     f"{output_prefix}_{num_output_id:04d}_{modal_id}_info.pkl",
                 )
 
-                replace_symlink(info_path, output_info)  # 创建软链接
-                replace_symlink(image_path, output_image)  # 创建软链接
+                replace_symlink(info_path, output_info)
+                replace_symlink(image_path, output_image)
 
                 image_file_outputID_pair["input_data_file_path"].append(image_path)
                 image_file_outputID_pair["output_data_file_path"].append(output_image)
@@ -351,7 +351,7 @@ class Inference(object):
                                 image_path.replace("_0000.nii.gz", ".nii.gz"),
                             )
                         ):
-                            # 如果不强制重写预测结果。如果预测文件已经生成，那么就跳过，不在重新生成
+                            # If the prediction result is not forced to be overwritten. If the prediction file has already been generated, then skip it and do not regenerate.
                             continue
 
                     if self.train_type == "coarse-fine":
@@ -517,7 +517,6 @@ class Inference(object):
         else:
             out = fine_model(input, False)
         del fine_model
-        # fine_model = fine_model.cpu()
         return out.cpu().float()
 
     def coarse_predict(
@@ -537,7 +536,6 @@ class Inference(object):
         coarse_model = coarse_model.cuda().half()
         input = to_cuda(input).half()
         out = coarse_model(input, False)
-        # coarse_model = coarse_model.cpu()
         return out.cpu().float()
 
     @staticmethod
@@ -623,9 +621,6 @@ class Validation(object):
                     VAL_INFOS["image_file"].append(image_file)
                     print("current_image_id:{}".format(image_id))
                     if self.train_type == "coarse-fine":
-                        # from PIL import Image
-                        # im = Image.fromarray(np.uint8((raw_image[0]-np.min(raw_image[0]))/(np.max(raw_image[0])-np.min(raw_image[0])) * 255), mode='L')
-                        # im.save("ct_raw_image.png")
                         coarse_image = (
                             torch.from_numpy(raw_image)
                             .unsqueeze(0)
@@ -758,7 +753,6 @@ class Validation(object):
                     self.FINE_DICE.update(global_avg_dice)
                     class_dice = classes_avg_dice
                     global_dice = 0
-                    # CHENQIANG:保存每个结果的信息，以及对应的dice。用于后续检查；
                     for idx, dc in enumerate(class_dice):
                         self.class_dc[idx].update(dc)
                         if np.isnan(dc):
@@ -802,9 +796,7 @@ class Validation(object):
         average_time_usage = (t_end - t_start) * 1.0 / len(self.val_loader)
         print("Average time usage: {} s".format(average_time_usage))
         print("Dice:{}".format(self.FINE_DICE.average))
-        # 保存数据
         now = datetime.now()
-        # 转换为字符串，指定格式
         date_str = now.strftime("%Y%m%d")
         pd.DataFrame(VAL_INFOS).to_csv(
             os.path.join(
@@ -853,7 +845,7 @@ class Validation(object):
             out, _ = fine_model(input, False)
         else:
             out = fine_model(input, False)
-        # fine_model = fine_model.cpu()
+        fine_model = fine_model.cpu()
         return out.cpu().float()
 
     @staticmethod

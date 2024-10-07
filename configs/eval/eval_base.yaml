@@ -1,0 +1,19 @@
+VERSION: "inference_demo"
+TRAINING_TYPE: 'coarse-fine'
+
+FINE_MODEL_PATH: "" # The path of the downloaded checkpoint directory.
+CHECK_POINT_NAME: "fine_checkpoint.pth"
+COARSE_MODEL_PATH: "" # The path of the downloaded checkpoint directory.
+COARSE_CHECK_POINT_NAME: "coarse_checkpoint.pth"
+
+DATASET:
+  BASE_DIR: '' # The path of the current project datasets directory.
+
+INFERENCE:
+  IS_OVERWRITE_PREDICT_MASK: False
+
+VAL:
+  IS_CROP: False
+  TTA: True
+
+

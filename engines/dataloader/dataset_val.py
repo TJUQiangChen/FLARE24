@@ -7,7 +7,7 @@ from batchgenerators.utilities.file_and_folder_operations import subfiles
 from torch.utils.data import Dataset
 
 from .utils import change_axes_of_image, load_data
-from engines.dataloader.utils import resize_by_spacing
+from utils.common_function import resize_by_spacing
 
 
 class predict_dataset(Dataset):

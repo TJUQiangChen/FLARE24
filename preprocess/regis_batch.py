@@ -1,10 +1,12 @@
-# 需要创建好一个delay文件夹(delay_root)，把所有delay模态放进去，其他模态放另一个文件夹(input_root)
+
 import ants
 import os
 from tqdm import tqdm
 
 
 def regis_data(input_root, delay_root, save_root):
+    # Create a folder named 'C+delay' (referred to as delay_root), and place all delay modality data into this folder. \
+    # Place all other modalities into another folder named 'input' (referred to as input_root).
     if not os.path.exists(save_root):
         os.makedirs(save_root)
 

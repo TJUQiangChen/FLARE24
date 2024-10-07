@@ -89,13 +89,11 @@ class model_train_data_process(object):
         mask, _, mask_direction, label_itk_info = load_data(
             join(self.mask_path, data_id + ".nii.gz")
         )
-        # 如果存在softmax
+        # if softmax matrix exists
         if os.path.exists(os.path.join(self.mask_path, data_id + "_softmax.npy")):
             softmax_image = np.load(
                 os.path.join(self.mask_path, data_id + "_softmax.npy")
             )
-            # 取出来最大概率
-            # softmax_image = softmax_image[1:].max(axis=0)
             is_softmax_exists = True
         assert image_direction.all() == mask_direction.all()
         if self.is_abdomen_crop:
@@ -171,7 +169,6 @@ class model_train_data_process(object):
             if is_softmax_exists:
                 crop_softmax_image = softmax_image
 
-        # print('fine0:', crop_image.shape)
         if "fine" in self.train_type:
             data_info_crop = OrderedDict()
             data_info_crop["raw_shape"] = image.shape
@@ -221,156 +218,156 @@ if __name__ == "__main__":
     _, config = parse_option("other")
 
     data_root_path = config.MR_DATA_PREPROCESS.ROOT_PATH
+    preprocess_stage = config.MR_DATA_PREPROCESS.STAGE
     if "LLD-MMRI" in config.MR_DATA_PREPROCESS.MR_RAW_DATA_PATH:
         data_set_name = "lld"
     else:
         data_set_name = "amos"
-    # 伪标签预处理-
-    # 1.使用stage2 / inference.py来对MR数据生成对应的预测标签  （注意这里生成的是中间结果的预测，因为在最终使用前还得筛选伪标签，所以这里输出的文件夹名字要带temp）
-    # 预处理，
-    # step1: process lld dataset (special)
-    # 将对应的原始文件拷贝出来。这里只包含C+Delay。
-    ############################ stage1 ############################
-    origin_image_path = os.path.join(
-        data_root_path, config.MR_DATA_PREPROCESS.MR_RAW_DATA_PATH
-    )
-    data_pair_path = os.path.join(
-        data_root_path, config.MR_DATA_PREPROCESS.DATA_PAIR_PATH
-    )
-    temp_output_label_path = os.path.join(
-        data_root_path,
-        config.MR_DATA_PREPROCESS.TEMP_PREPROCESSED_PSUEDO_LABEL_PATH,
-    )
-    os.makedirs(temp_output_label_path, exist_ok=True)
-    if data_set_name == "lld":
-        img_temp_path = os.path.join(
-            data_root_path, config.MR_DATA_PREPROCESS.LLD_TEMP_MR_RAW_DATA_PATH
-        )
+    if preprocess_stage > 1:
 
-        print("current is LLD dataset.\n processing mr_preprocessed_stage1")
-        path_info = {
-            "train_image_path": [
-                origin_image_path,
-            ],
-            "output_image_path": img_temp_path,
-        }
-        image_file_outputID_pair = process_lld_data_img(path_info, "LLD")
-
-        now = datetime.now()
-        output_pair_name = "Dataset667_FLARE24v3"
-        # 转换为字符串，指定格式
-        date_str = now.strftime("%Y%m%d")
-        with open(
-            os.path.join(
-                data_pair_path,
-                "{}-{}.json".format(output_pair_name, date_str),
-            ),
-            "w",
-        ) as f:
-            f.write(json.dumps(image_file_outputID_pair))
-    # 2. 配准(只需要做一次)
-    # need a lots of time, need predo
-    # TODO:配准数据是不是要整合到一起？这个也得考虑一下
-    if data_set_name == "lld":
-        regis_data_output_path = os.path.join(
-            config.MR_DATA_PREPROCESS.ROOT_PATH,
-            config.MR_DATA_PREPROCESS.REGIS.OUTPUT_PATH,
+        ############################ stage1 ############################
+        origin_image_path = os.path.join(
+            data_root_path, config.MR_DATA_PREPROCESS.MR_RAW_DATA_PATH
         )
-        if not os.path.exists(config.MR_DATA_PREPROCESS.REGIS.OUTPUT_PATH):
-            regis_data(
-                origin_image_path,
-                origin_image_path,
-                regis_data_output_path,
+        data_pair_path = os.path.join(
+            data_root_path, config.MR_DATA_PREPROCESS.DATA_PAIR_PATH
+        )
+        temp_output_label_path = os.path.join(
+            data_root_path,
+            config.MR_DATA_PREPROCESS.TEMP_PREPROCESSED_PSUEDO_LABEL_PATH,
+        )
+        os.makedirs(temp_output_label_path, exist_ok=True)
+        # Pseudo-label Preprocessing:
+        # Utilize inference.py to generate corresponding predicted labels for MR data
+        # that these are intermediate prediction results since the pseudo-labels need to be filtered before final use, hence the output directory name should include "temp").
+        # Preprocessing, Step 1: Process the LLD dataset (special) Copy the corresponding original files.
+        # This includes only C+Delay.
+        if data_set_name == "lld":
+            img_temp_path = os.path.join(
+                data_root_path, config.MR_DATA_PREPROCESS.TEMP_MR_RAW_DATA_PATH
             )
-    # # # 3 using infercence to inference_new_result
-    # ############################ stage2 ############################
-    print("stage1:inference psuedo label")
-    config.defrost()
-    config.DATASET.VAL_IMAGE_PATH = config.MR_DATA_PREPROCESS.LLD_TEMP_MR_RAW_DATA_PATH
-    config.VAL_OUTPUT_PATH = temp_output_label_path
-    old_trainning_type = config.TRAINING_TYPE
-    old_coarse_size = config.DATASET.COARSE.SIZE
-    old_fine_size = config.DATASET.FINE.SIZE
-    # 根据之前训练好的模型来修改对应参数
-    fine_model_checkpoint = load_checkpoint(
-        config.FINE_MODEL_PATH, config.CHECK_POINT_NAME
-    )
-    config.DATASET.FINE.SIZE = fine_model_checkpoint["config"].DATASET.FINE.SIZE
-    config.DATASET.COARSE.SIZE = fine_model_checkpoint["config"].DATASET.COARSE.SIZE
-    config.TRAINING_TYPE = fine_model_checkpoint["config"].TRAINING_TYPE
-    config.freeze()
-    predict = Inference(config)
-    predict.run()
-    # # # 4 filter plabel
-    # # ############################ stage3 ############################
-    config.defrost()
-    config.TRAINING_TYPE = old_trainning_type
-    config.DATASET.COARSE.SIZE = old_coarse_size
-    config.DATASET.FINE.SIZE = old_fine_size
-    config.freeze()
-    ct_gt_file = os.path.join(data_root_path, config.MR_DATA_PREPROCESS.CT_GT_PATH)
-    output_each_ct_labels_num_static_path = os.path.join(
-        data_root_path, config.MR_DATA_PREPROCESS.OUTPUT_EACH_CT_LABELS_NUM_STATIC_PATH
-    )
-    filter_path = os.path.join(
-        data_root_path, config.MR_DATA_PREPROCESS.FILTER_CASE_SAVE_PATH
-    )
-    print("stage2:filter Psuedo label")
-    # 1.统计标准CT的各个类别的大小
-    if not os.path.exists(output_each_ct_labels_num_static_path):
-        _ = static_gt_each_labels_num(
-            ct_gt_file,
-            output_each_ct_labels_num_static_path,
-        )
-    # 2.基于voxel进行filter
-    reference_summary = pd.read_csv(output_each_ct_labels_num_static_path, index_col=0)
-    # 生成筛选的数据并且将filter的结果导出csv
-    process_fake_labels(
-        config.VAL_OUTPUT_PATH,
-        reference_summary,
-        filter_path,
-    )
-    # 5.
-    output_label_path = os.path.join(data_root_path, config.DATASET.TRAIN_MASK_PATH)
-    output_image_path = os.path.join(data_root_path, config.DATASET.TRAIN_IMAGE_PATH)
 
-    bad_image_file_path = os.path.join(
-        data_root_path, config.MR_DATA_PREPROCESS.BAD_CASE_PATH
-    )
-    use_regis_dataset = config.MR_DATA_PREPROCESS.IS_LLD_REGIS_DATA
-    os.makedirs(output_label_path, exist_ok=True)
-    os.makedirs(output_image_path, exist_ok=True)
-    os.makedirs(os.path.dirname(bad_image_file_path), exist_ok=True)
-    if data_set_name == "lld":
-        if use_regis_dataset:
-            # 如果使用配准的数据，需要修改origin_image_path
-            origin_image_path = regis_data_output_path
-        preprocess_lld_datset_plabel(
-            origin_image_path,
-            temp_output_label_path,
-            output_label_path,
-            output_image_path,
-            os.path.join(
-                data_pair_path,
-                "{}-{}.json".format(output_pair_name, date_str),
-            ),
-            bad_image_file_path,
-            filter_path,
-            use_regis_dataset,
-        )
-    else:
-        preprocess_amos_datset_plabel(
-            origin_image_path,
-            temp_output_label_path,
-            output_label_path,
-            output_image_path,
-            filter_path,
-        )
+            print("current is LLD dataset.\n processing mr_preprocessed_stage1")
+            path_info = {
+                "train_image_path": [
+                    origin_image_path,
+                ],
+                "output_image_path": img_temp_path,
+            }
+            image_file_outputID_pair = process_lld_data_img(path_info, "LLD")
 
-    # 使用custom / preprocess_flare24_mr_lld_dataset.py
-    # 中的stage2, 针对amos数据和LLD数据预处理 （注意这里生成的是最终结果的预测，所以这里输入文件是第一步的xxxtemp，输出的文件夹名字要带Vxx）。而且由于使用软链接，第一步的文件夹不能删除
-    # 不用5.使用custom/merge_data.py 将多个数据集整合到一起（使用软链接，不要删除原文件）
-    #
-    # # 6.生成TPH的数据
-    # # # 生成对应TPH的数据
+            now = datetime.now()
+            output_pair_name = "Dataset667_FLARE24v3"
+            # 转换为字符串，指定格式
+            date_str = now.strftime("%Y%m%d")
+            with open(
+                os.path.join(
+                    data_pair_path,
+                    "{}-{}.json".format(output_pair_name, date_str),
+                ),
+                "w",
+            ) as f:
+                f.write(json.dumps(image_file_outputID_pair))
+
+        # # # 2 using infercence to inference_new_result
+        # ############################ stage2 ############################
+
+        config.defrost()
+        config.DATASET.VAL_IMAGE_PATH = config.MR_DATA_PREPROCESS.TEMP_MR_RAW_DATA_PATH
+        config.VAL_OUTPUT_PATH = temp_output_label_path
+        old_trainning_type = config.TRAINING_TYPE
+        old_coarse_size = config.DATASET.COARSE.SIZE
+        old_fine_size = config.DATASET.FINE.SIZE
+        # Refine the corresponding parameters based on the previously trained model.
+        fine_model_checkpoint = load_checkpoint(
+            config.FINE_MODEL_PATH, config.CHECK_POINT_NAME
+        )
+        config.DATASET.FINE.SIZE = fine_model_checkpoint["config"].DATASET.FINE.SIZE
+        config.DATASET.COARSE.SIZE = fine_model_checkpoint["config"].DATASET.COARSE.SIZE
+        config.TRAINING_TYPE = fine_model_checkpoint["config"].TRAINING_TYPE
+        config.freeze()
+        predict = Inference(config)
+        predict.run()
+        print("stage2:inference psuedo label")
+        # 3. Registration (only needs to be done once)
+        # ############################ stage3 ############################
+        # Need a lots of time
+        if data_set_name == "lld":
+            regis_data_output_path = os.path.join(
+                config.MR_DATA_PREPROCESS.ROOT_PATH,
+                config.MR_DATA_PREPROCESS.REGIS.OUTPUT_PATH,
+            )
+            if not os.path.exists(config.MR_DATA_PREPROCESS.REGIS.OUTPUT_PATH):
+                regis_data(
+                    origin_image_path,
+                    origin_image_path,
+                    regis_data_output_path,
+                )
+            print("stage3:Registration lld data")
+        # # # 4 filter plabel
+        # # ############################ stage3 ############################
+        config.defrost()
+        config.TRAINING_TYPE = old_trainning_type
+        config.DATASET.COARSE.SIZE = old_coarse_size
+        config.DATASET.FINE.SIZE = old_fine_size
+        config.freeze()
+        ct_gt_file = os.path.join(data_root_path, config.MR_DATA_PREPROCESS.CT_GT_PATH)
+        output_each_ct_labels_num_static_path = os.path.join(
+            data_root_path, config.MR_DATA_PREPROCESS.OUTPUT_EACH_CT_LABELS_NUM_STATIC_PATH
+        )
+        filter_path = os.path.join(
+            data_root_path, config.MR_DATA_PREPROCESS.FILTER_CASE_SAVE_PATH
+        )
+        print("stage4:filter Psuedo label")
+        # Count the number of voxels for each organ category in the standard CT data.
+        if not os.path.exists(output_each_ct_labels_num_static_path):
+            _ = static_gt_each_labels_num(
+                ct_gt_file,
+                output_each_ct_labels_num_static_path,
+            )
+        # Filter based on voxels.
+        reference_summary = pd.read_csv(output_each_ct_labels_num_static_path, index_col=0)
+        # Get the filtered data and export the filter results to CSV.
+        process_fake_labels(
+            config.VAL_OUTPUT_PATH,
+            reference_summary,
+            filter_path,
+        )
+        output_label_path = os.path.join(data_root_path, config.DATASET.TRAIN_MASK_PATH)
+        output_image_path = os.path.join(data_root_path, config.DATASET.TRAIN_IMAGE_PATH)
+
+        bad_image_file_path = os.path.join(
+            data_root_path, config.MR_DATA_PREPROCESS.BAD_CASE_PATH
+        )
+        use_regis_dataset = config.MR_DATA_PREPROCESS.IS_LLD_REGIS_DATA
+        os.makedirs(output_label_path, exist_ok=True)
+        os.makedirs(output_image_path, exist_ok=True)
+        os.makedirs(os.path.dirname(bad_image_file_path), exist_ok=True)
+        if data_set_name == "lld":
+            if use_regis_dataset:
+                # If you use registered data, you need to modify the 'origin_image_path'.
+                origin_image_path = regis_data_output_path
+            preprocess_lld_datset_plabel(
+                origin_image_path,
+                temp_output_label_path,
+                output_label_path,
+                output_image_path,
+                os.path.join(
+                    data_pair_path,
+                    "{}-{}.json".format(output_pair_name, date_str),
+                ),
+                bad_image_file_path,
+                filter_path,
+                use_regis_dataset,
+            )
+        else:
+            preprocess_amos_datset_plabel(
+                origin_image_path,
+                temp_output_label_path,
+                output_label_path,
+                output_image_path,
+                filter_path,
+            )
+
+    # 6.Preprocess the data required for model generation
     run_prepare_data(config, True, True)

@@ -1,0 +1,15 @@
+TRAINING_TYPE: 'coarse-fine'  # this is small segnet demo. if using big segnet.this change to 'fine'
+FINE_MODEL_PATH: "" # The path of the downloaded checkpoint directory.
+CHECK_POINT_NAME: "fine_checkpoint.pth"
+COARSE_MODEL_PATH: "" # The path of the downloaded checkpoint directory.
+COARSE_CHECK_POINT_NAME: "coarse_checkpoint.pth"
+
+MR_DATA_PREPROCESS:
+  ROOT_PATH: "" # The path of the current project datasets directory.
+
+DATASET:
+  BASE_DIR: ""  # The path of the current project datasets directory.
+
+VAL:
+  TTA: False
+  EVAL_OUTPUT_RESULT: "/temp"

@@ -122,9 +122,6 @@ def run_evaluation(output_seg, target):
     online_eval_fn = []
     with torch.no_grad():
         num_classes = 14
-        # output_softmax = F.softmax(output, 1)
-        # output_seg = output_softmax.argmax(1)
-        # target = target[:, 0]
         axes = tuple(range(1, len(target.shape)))
         tp_hard = torch.zeros((target.shape[0], num_classes - 1)).to(
             output_seg.device.index

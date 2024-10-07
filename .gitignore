@@ -2,7 +2,4 @@ wandb
 *egg-info
 .vscode
 *__pycache__*
-save*
-val*
-*image
 .idea
