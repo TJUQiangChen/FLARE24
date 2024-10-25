@@ -3,3 +3,4 @@ wandb
 .vscode
 *__pycache__*
 .idea
+/datasets

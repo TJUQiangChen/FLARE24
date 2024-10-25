@@ -273,7 +273,9 @@ if __name__ == "__main__":
         # ############################ stage2 ############################
 
         config.defrost()
-        config.DATASET.VAL_IMAGE_PATH = config.MR_DATA_PREPROCESS.TEMP_MR_RAW_DATA_PATH
+        # 这行有问题
+        # config.DATASET.VAL_IMAGE_PATH = config.MR_DATA_PREPROCESS.TEMP_MR_RAW_DATA_PATH
+        config.DATASET.VAL_IMAGE_PATH = config.MR_DATA_PREPROCESS.MR_RAW_DATA_PATH
         config.VAL_OUTPUT_PATH = temp_output_label_path
         old_trainning_type = config.TRAINING_TYPE
         old_coarse_size = config.DATASET.COARSE.SIZE

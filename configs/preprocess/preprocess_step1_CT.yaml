@@ -12,10 +12,10 @@ VERSION: "preprocess_step1_CT"
 
 # final stage
 DATASET:
-  TRAIN_IMAGE_PATH: 'CT/CT_train_300'
-  TRAIN_MASK_PATH: 'CT/CT_label_300'
+  TRAIN_IMAGE_PATH: 'datasets/CT/CT_image'
+  TRAIN_MASK_PATH: 'datasets/CT/CT_label'
   IS_ABDOMEN_CROP: False
   COARSE:
-    PROPRECESS_PATH: "processed_data/coarse/small_segnet/ct_300"
+    PROPRECESS_PATH: "datasets/processed_data/coarse/small_segnet/ct"
   FINE:
-    PROPRECESS_PATH: "processed_data/fine/small_segnet/ct_300"
+    PROPRECESS_PATH: "datasets/processed_data/fine/small_segnet/ct"

@@ -15,9 +15,9 @@ class predict_dataset(Dataset):
         super(predict_dataset, self).__init__()
         self.config = config
         self.data_path = os.path.join(config.DATASET.BASE_DIR, config.DATASET.VAL_IMAGE_PATH)
-     
+        print(config.DATASET.VAL_IMAGE_PATH)
         self.is_nor_dir = self.config.DATASET.IS_NORMALIZATION_DIRECTION
-
+        # print(self.data_path) 
         self.series_ids = subfiles(self.data_path, join=False, suffix='gz')
     def __len__(self):
         return len(self.series_ids)
