@@ -90,9 +90,13 @@ Now you can train your models.
 
 ### Step 1: Training Domin transfer
 
-
+- Train stage one image-to-image translation model for style transfer
 ```bash
-The command will be available soon.
+python stage_1_i2i_train.py --name sourceAtotargetB
+```
+- Generate target-like source domain images
+```bash
+python stage_1.5_i2i_inference.py --ckpt_path YOUR_PATH --source_npy_dirpath SOURCE_PATH --target_npy_dirpath TARGET_PATH --save_npy_dirpath SAVE_PATH --k_means_clusters 6
 ```
 
 ### Step 2: Training Big SegNet
