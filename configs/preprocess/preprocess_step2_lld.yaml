@@ -3,19 +3,19 @@ BASE: ["preprocess_base.yaml"]
 MR_DATA_PREPROCESS:
   STAGE: 2
   
-  # MR_DATA_PREPROCESS.ROOT_PATH: "/mnt16t_ext/dinghaoyu/FLARE24/datasets/MR/Training/LLD-MMRI-3984"
-  MR_RAW_DATA_PATH: "datasets/MR/Training/LLD-MMRI-3984"
+  # MR_DATA_PREPROCESS.ROOT_PATH: "/mnt16t_ext/dinghaoyu/FLARE24/MR/Training/LLD-MMRI-3984"
+  MR_RAW_DATA_PATH: "MR/Training/LLD-MMRI-3984"
   # stage1 - preprocess
-  TEMP_MR_RAW_DATA_PATH:  "datasets/MR/Training/LLD-MMRI-3984-demo" # after filter, C+Delay data save path
-  DATA_PAIR_PATH: "datasets/MR/Training/preprocess_data_pair" # using symlink and rename to save Hard Disk Space. it's recoder source filename and symlink name pair. it's json file path.
-  TEMP_PREPROCESSED_PSUEDO_LABEL_PATH: "datasets/MR/Training/PLabel/LLD-MMRI-3984-T2_tmp_demo" # test
+  TEMP_MR_RAW_DATA_PATH:  "MR/Training/LLD-MMRI-3984-demo" # after filter, C+Delay data save path
+  DATA_PAIR_PATH: "MR/Training/preprocess_data_pair" # using symlink and rename to save Hard Disk Space. it's recoder source filename and symlink name pair. it's json file path.
+  TEMP_PREPROCESSED_PSUEDO_LABEL_PATH: "MR/Training/PLabel/LLD-MMRI-3984-T2_tmp_demo" # test
   # stage2 regis
   REGIS:
-    OUTPUT_PATH: 'datasets/MR/Training/regis_data/LLD-MMRI-3984-regis-demo'
-  CT_GT_PATH: "datasets/CT/CT_label"
-  OUTPUT_EACH_CT_LABELS_NUM_STATIC_PATH: 'datasets/static_info/label_class_static_demo.csv'
-  FILTER_CASE_SAVE_PATH: "datasets/static_info/filter_plabel_lld_demo.csv" # save filtered case infos . it's csv file path.
-  BAD_CASE_PATH: 'datasets/MR/Training/preprocess_data_pair/LLD_demo.json' # preprocessed fail case file. it's json file path.
+    OUTPUT_PATH: 'MR/Training/regis_data/LLD-MMRI-3984-regis-demo'
+  CT_GT_PATH: "CT/CT_label"
+  OUTPUT_EACH_CT_LABELS_NUM_STATIC_PATH: 'static_info/label_class_static_demo.csv'
+  FILTER_CASE_SAVE_PATH: "static_info/filter_plabel_lld_demo.csv" # save filtered case infos . it's csv file path.
+  BAD_CASE_PATH: 'MR/Training/preprocess_data_pair/LLD_demo.json' # preprocessed fail case file. it's json file path.
   IS_LLD_REGIS_DATA: True
 
 INFERENCE:
@@ -26,11 +26,11 @@ VERSION: "preprocess_step2_lld"
 
 # final stage
 DATASET:
-  BASE_DIR: "/mnt16t_ext/dinghaoyu/FLARE24"
-  TRAIN_IMAGE_PATH: 'datasets/MR/Training/PLabel_image/LLD-MMRI-3984'   # set preprocessed data save path
-  TRAIN_MASK_PATH: 'datasets/MR/Training/PLabel/LLD-MMRI-3984' # set preprocessed data lable save path
+  BASE_DIR: "/mnt16t_ext/dinghaoyu/FLARE24/datasets"  # please use absolute path!!! because we use symlink
+  TRAIN_IMAGE_PATH: 'MR/Training/PLabel_image/LLD-MMRI-3984'   # set preprocessed data save path
+  TRAIN_MASK_PATH: 'MR/Training/PLabel/LLD-MMRI-3984' # set preprocessed data lable save path
   IS_ABDOMEN_CROP: False
   COARSE:
-    PROPRECESS_PATH: "datasets/processed_data/coarse/small_segnet/MR_lld_stage2"
+    PROPRECESS_PATH: "processed_data/coarse/small_segnet/MR_lld_stage2"
   FINE:
-    PROPRECESS_PATH: "datasets/processed_data/fine/small_segnet/MR_lld_stage2"
+    PROPRECESS_PATH: "processed_data/fine/small_segnet/MR_lld_stage2"

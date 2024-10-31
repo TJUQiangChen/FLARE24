@@ -1,13 +1,13 @@
 TRAINING_TYPE: 'fine'
-FINE_MODEL_PATH: "" # The path of the downloaded checkpoint directory.
+FINE_MODEL_PATH: "checkpoints_dir" # The path of the downloaded checkpoint directory.
 CHECK_POINT_NAME: "fine_checkpoint.pth"
-COARSE_MODEL_PATH: "" # The path of the downloaded checkpoint directory.
+COARSE_MODEL_PATH: "checkpoints_dir" # The path of the downloaded checkpoint directory.
 COARSE_CHECK_POINT_NAME: "coarse_checkpoint.pth"
 FINETUNE: False
 
 DATASET:
   DATASET_NAME: 'Raw'
-  BASE_DIR: "" # The path of the current project datasets directory.
+  BASE_DIR: "datasets" # The path of the current project datasets directory.
   DA:
     DO_MIRROR: True
 

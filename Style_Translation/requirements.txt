@@ -4,3 +4,4 @@ volumentations-3d
 adabelief_pytorch
 tqdm
 sklearn
+albumentations

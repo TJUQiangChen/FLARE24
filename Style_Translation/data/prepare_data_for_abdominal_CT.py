@@ -19,9 +19,20 @@ def pad(im):
 '''
 CT Prepare: 3D to 2D slice (image and mask)
 '''
+# modify this
+root=r'/mnt16t_ext/dinghaoyu/FLARE24/datasets/CT/CT_image'
+label_root=r'/mnt16t_ext/dinghaoyu/FLARE24/datasets/CT/CT_label'
 
-root=r'/mnt16t/FLARE24/Dataset/CT/Training/CT_train_2000'
-label_root=r'/mnt16t/FLARE24/Dataset/CT/Training/CT_label_2000'
+
+# os.chdir('Style_Translation')
+
+if not os.path.exists('datasets/CT_2d'):
+    os.mkdir('datasets/CT_2d')
+
+if not os.path.exists('datasets/CT_2d_label'):    
+    os.mkdir('datasets/CT_2d_label')
+
+
 A_imgs=[]
 for f in os.listdir(root):
     img = nib.load(os.path.join(root,f))
@@ -58,5 +69,6 @@ for f in os.listdir(root):
     
     for i in range(image_data.shape[2]-1):
         name = f[:10] + '_{}'.format(i) + f[10:]
-        np.save('/mnt16t/FLARE24/Dataset/CT_2d/{}'.format(name.replace('.nii.gz','.npy')),image_data[:,:,i:i+1])
-        np.save('/mnt16t/FLARE24/Dataset/CT_2d_label/{}'.format(name.replace('img','label').replace('.nii.gz','.npy')),mask_data[:,:,i:i+1])
+        np.save('datasets/CT_2d/{}'.format(name.replace('.nii.gz','.npy')),image_data[:,:,i:i+1])
+        np.save('datasets/CT_2d_label/{}'.format(name.replace('img','label').replace('.nii.gz','.npy')),mask_data[:,:,i:i+1])
+    print('finish:', name)

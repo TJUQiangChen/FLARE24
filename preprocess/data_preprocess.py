@@ -58,7 +58,7 @@ class model_train_data_process(object):
         self.fine_size = self.config.DATASET.FINE.PREPROCESS_SIZE
         self.nor_dir = self.config.DATASET.IS_NORMALIZATION_DIRECTION
         self.extend_size = self.config.DATASET.EXTEND_SIZE
-
+ 
         self.image_path = os.path.join(
             config.DATASET.BASE_DIR, config.DATASET.TRAIN_IMAGE_PATH
         )
@@ -71,7 +71,7 @@ class model_train_data_process(object):
         self.preprocess_fine_path = os.path.join(
             config.DATASET.BASE_DIR, config.DATASET.FINE.PROPRECESS_PATH
         )
-        self.data_list = subfiles(self.image_path, join=False, suffix="nii.gz")
+        self.data_list = os.listdir(self.image_path)
         if is_overwrite and isdir(self.preprocess_coarse_path):
             shutil.rmtree(self.preprocess_coarse_path)
         os.makedirs(self.preprocess_coarse_path, exist_ok=True)
@@ -84,8 +84,7 @@ class model_train_data_process(object):
         is_softmax_exists = False
         data_id = image_id.split("_0000.nii.gz")[0]
         image, image_spacing, image_direction, image_itk_info = load_data(
-            join(self.image_path, data_id + "_0000.nii.gz")
-        )
+            join(self.image_path, data_id + "_0000.nii.gz"))
         mask, _, mask_direction, label_itk_info = load_data(
             join(self.mask_path, data_id + ".nii.gz")
         )
@@ -119,7 +118,6 @@ class model_train_data_process(object):
                     softmax_image[s_i] = change_axes_of_image(
                         softmax_image[s_i], mask_direction
                     )
-
         if "coarse" in self.train_type:
             data_info = OrderedDict()
             data_info["raw_shape"] = image.shape
@@ -217,7 +215,7 @@ class model_train_data_process(object):
 if __name__ == "__main__":
     _, config = parse_option("other")
 
-    data_root_path = config.MR_DATA_PREPROCESS.ROOT_PATH
+    data_root_path = config.MR_DATA_PREPROCESS.ROOT_PATH  # /datasets
     preprocess_stage = config.MR_DATA_PREPROCESS.STAGE
     if "LLD-MMRI" in config.MR_DATA_PREPROCESS.MR_RAW_DATA_PATH:
         data_set_name = "lld"
@@ -273,9 +271,7 @@ if __name__ == "__main__":
         # ############################ stage2 ############################
 
         config.defrost()
-        # 这行有问题
-        # config.DATASET.VAL_IMAGE_PATH = config.MR_DATA_PREPROCESS.TEMP_MR_RAW_DATA_PATH
-        config.DATASET.VAL_IMAGE_PATH = config.MR_DATA_PREPROCESS.MR_RAW_DATA_PATH
+        config.DATASET.VAL_IMAGE_PATH = config.MR_DATA_PREPROCESS.TEMP_MR_RAW_DATA_PATH
         config.VAL_OUTPUT_PATH = temp_output_label_path
         old_trainning_type = config.TRAINING_TYPE
         old_coarse_size = config.DATASET.COARSE.SIZE
@@ -370,6 +366,7 @@ if __name__ == "__main__":
                 output_image_path,
                 filter_path,
             )
-
+    print('TPH preprocess')
     # 6.Preprocess the data required for model generation
     run_prepare_data(config, True, True)
+

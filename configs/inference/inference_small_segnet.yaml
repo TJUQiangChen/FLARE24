@@ -1,6 +1,6 @@
 BASE: ['inference_base.yaml']
 
-VAL_OUTPUT_PATH: "" # The path of inference output directory.
+VAL_OUTPUT_PATH: "result" # The path of inference output directory.
 
 DATASET:
   DATASET_NAME: 'inference_demo'

@@ -87,40 +87,41 @@ def preprocess_amos_datset_plabel(
         filter_file = [f.split(".")[0].split("_")[1] for f in df["file_name"].tolist()]
     else:
         filter_file = None
-
     images_files = os.listdir(origin_image_path)
+    
     for images_file in tqdm(images_files):
         file_idx = extract_image_id(images_file)
         if filter_file is not None:
             if file_idx in filter_file:
+                print("{} has being filt!".format(file_idx))
                 continue
-        train_image_path = os.path.join(origin_image_path, images_file)
-        output_image_file_name = os.path.basename(train_image_path)
-        lable_path = os.path.join(
-            temp_output_label_path, "amos_{:04d}.nii.gz".format(int(file_idx))
-        )
-        # img copy
-        os.makedirs(output_image_path, exist_ok=True)
-        replace_symlink(
-            train_image_path, os.path.join(output_image_path, output_image_file_name)
-        )
-        # label copy
-        replace_symlink(
-            lable_path,
-            os.path.join(
-                output_label_path,
-                "_".join(output_image_file_name.split("_")[:-1]) + ".nii.gz",
-            ),
-        )
-        # If the softmax results exist, save them as well.
-        if os.path.exists(lable_path.replace(".nii.gz", "_softmax.npy")):
+            train_image_path = os.path.join(origin_image_path, images_file)
+            output_image_file_name = os.path.basename(train_image_path)
+            lable_path = os.path.join(
+                temp_output_label_path, "amos_{:04d}.nii.gz".format(int(file_idx))
+            )
+            # img copy
+            os.makedirs(output_image_path, exist_ok=True)
             replace_symlink(
-                lable_path.replace(".nii.gz", "_softmax.npy"),
+                train_image_path, os.path.join(output_image_path, output_image_file_name)
+            )
+            # label copy
+            replace_symlink(
+                lable_path,
                 os.path.join(
                     output_label_path,
-                    "_".join(output_image_file_name.split("_")[:-1]) + "_softmax.npy",
+                    "_".join(output_image_file_name.split("_")[:-1]) + ".nii.gz",
                 ),
             )
+            # If the softmax results exist, save them as well.
+            if os.path.exists(lable_path.replace(".nii.gz", "_softmax.npy")):
+                replace_symlink(
+                    lable_path.replace(".nii.gz", "_softmax.npy"),
+                    os.path.join(
+                        output_label_path,
+                        "_".join(output_image_file_name.split("_")[:-1]) + "_softmax.npy",
+                    ),
+                )
 
 
 def preprocess_lld_datset_plabel(

@@ -305,7 +305,6 @@ class Inference(object):
                 pin_memory=config.DATALOADER.PIN_MEMORY,
                 shuffle=False,
             )
-            print(len(self.val_loader))
         else:
             self.val_loader = predict_dataset(config)
         cudnn.benchmark = True
@@ -494,7 +493,6 @@ class Inference(object):
                             ),
                             soft_weight_image.half().cpu().numpy(),
                         )
-                    print(f"{image_id} Done")
 
         torch.cuda.synchronize()
         t_end = time.time()

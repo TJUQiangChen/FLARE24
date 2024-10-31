@@ -18,7 +18,16 @@ def pad(im):
 '''
 MR Prepare: 3D to 2D slice (image)
 '''
-root=r'/mnt16t/FLARE24/Dataset/MR/Training/AMOS_MR_good_spacing-833'
+
+# Need to preprocess AMOS and LLD datasets
+
+if not os.path.exists('datasets/MR_2d'):    
+    os.mkdir('datasets/MR_2d')
+    
+# AMOS
+root=r'/mnt16t_ext/dinghaoyu/FLARE24/datasets/MR/Training/AMOS_MR_good_spacing-833'
+
+    
 for d in os.listdir(root)[0:250]:
     im_list=[]
     img = nib.load(os.path.join(root,d))
@@ -39,12 +48,12 @@ for d in os.listdir(root)[0:250]:
         continue
     
     for i in range(image_data.shape[2]-1):
-        name = d[:10] + '_{}'.format(i) + d[10:]
-        np.save('/mnt16t/FLARE24/Dataset/MR_2d/{}'.format(name.replace('.nii.gz','.npy')),image_data[:,:,i:i+1])
+        name = d[:10] + '{}_'.format(i) + d[10:]
+        np.save('datasets/MR_2d/{}'.format(name.replace('.nii.gz','.npy')),image_data[:,:,i:i+1])
+    print('AMOS finish:', name)
 
-
-
-root=r'/mnt16t/FLARE24/Dataset/MR/Training/LLD-MMRI-3984'
+# LLD
+root=r'/mnt16t_ext/dinghaoyu/FLARE24/datasets/MR/Training/LLD-MMRI-3984'
 for d in os.listdir(root)[0:250]:
     im_list=[]
     img = nib.load(os.path.join(root,d))
@@ -65,9 +74,9 @@ for d in os.listdir(root)[0:250]:
         continue
     
     for i in range(image_data.shape[2]-1):
-        name = d[:10] + '_{}'.format(i) + d[10:]
-        np.save('/mnt16t/FLARE24/Dataset/MR_2d/{}'.format(name.replace('.nii.gz','.npy')), image_data[:,:,i:i+1])
-
+        name = d[:10] + '{}_'.format(i) + d[10:]
+        np.save('datasets/MR_2d/{}'.format(name.replace('.nii.gz','.npy')), image_data[:,:,i:i+1])
+    print('LLD finish:', name)
 
 
 

@@ -9,8 +9,10 @@ import SimpleITK as sitk
 import os
 os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
+# python stage_1.5_i2i_inference.py --source_npy_dirpath /mnt16t_ext/dinghaoyu/FLARE24/Style_Translation/datasets/CT_2d --target_npy_dirpath /mnt16t_ext/dinghaoyu/FLARE24/Style_Translation/datasets/MR_2d --save_dirpath /mnt16t_ext/dinghaoyu/FLARE24/Style_Translation/datasets/result
+
 parser = argparse.ArgumentParser()
-parser.add_argument('--ckpt_path', type=str, default='/mnt16t/FLARE24/DAR-UNet-main/version11/i2i_checkpoints/enc_0200.pt')
+parser.add_argument('--ckpt_path', type=str, default='/mnt16t_ext/dinghaoyu/FLARE24/Style_Translation/checkpoints_dir/enc_0200.pt')
 parser.add_argument('--source_npy_dirpath', type=str, default='/mnt16t_ext/lijiaxi/STYLE_DATASET/DAR_CT_npy')
 parser.add_argument('--target_npy_dirpath', type=str, default='/mnt16t_ext/lijiaxi/STYLE_DATASET/DAR_MR_npy')
 parser.add_argument('--save_dirpath', type=str, default='datasets/source2target_training_npy')

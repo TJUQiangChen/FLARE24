@@ -1,4 +1,4 @@
-ants==0.0.7
+antspyx
 einops==0.6.1
 fastremap==1.14.1
 hiddenlayer==0.3

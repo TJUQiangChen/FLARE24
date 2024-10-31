@@ -1,11 +1,11 @@
 BASE: ['eval_base.yaml']
 
-VAL_OUTPUT_PATH: "" # The path of inference output directory.
+VAL_OUTPUT_PATH: "result" # The path of inference output directory.
 
 DATASET:
   DATASET_NAME: "eval_demo"
-  VAL_IMAGE_PATH: 'MR/PublicValidation/imagesVal'
-  VAL_MASK_PATH: 'MR/PublicValidation/labelsVal'
+  VAL_IMAGE_PATH: 'MR/PublicValidation/imagesVal' # ground-truth MR
+  VAL_MASK_PATH: 'MR/PublicValidation/labelsVal'  # ground-truth MR label
   VAL_CHANGE_SPACING: False
   DA:
     DO_MIRROR: False
