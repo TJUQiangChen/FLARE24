@@ -366,7 +366,6 @@ if __name__ == "__main__":
                 output_image_path,
                 filter_path,
             )
-    print('TPH preprocess')
     # 6.Preprocess the data required for model generation
     run_prepare_data(config, True, True)
 
