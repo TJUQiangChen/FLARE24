@@ -7,7 +7,7 @@ FINETUNE: False
 
 DATASET:
   DATASET_NAME: 'Raw'
-  BASE_DIR: "datasets" # The path of the current project datasets directory.
+  BASE_DIR: "/mnt16t_ext/dinghaoyu/FLARE24/datasets" # The path of the current project datasets directory. # please use absolute path!!! because we use symlink
   DA:
     DO_MIRROR: True
 
@@ -16,7 +16,7 @@ DATALOADER:
   NUM_WORKERS: 8
 
 TRAIN:
-  EPOCHS: 300
+  EPOCHS: 3
   MULTI_TASK:
     IS_OPEN: False
     CLASS_NUM: 2

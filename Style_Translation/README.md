@@ -1,31 +1,9 @@
 # Style Translation
-
 The codes for the work "A 3D Unsupervised Domain Adaption Framework Combining Style Translation and Self-Training for Abdominal Organs Segmentation".
 
 ## 1. Prepare data
 
-1. Respacing the source and target domain images (both should be gray) with the same XY plane resolutions, and crop/pad to the size of [512, 512, d] in terms of [width, height, depth].
-
-2. Normlizae each 3D images to [0, 1], and extract 2D slices from 3D volumes along depth-axis.
-
-3. Stack the list of 2D slices at zero dimension for the two domains respectively, resulting in 3D tensor with size of [N, 512, 512], and then save them as the follows:
-
-```bash
-
-We provide two scripts to preprocess the CT and MR data,  you only need to modify the path to complete the preprocessing of the training and testing data
-
-cd FLARE24/Style_Translation
-python Style_Translation/data/prepare_data_for_abdominal_CT.py
-python Style_Translation/data/prepare_data_for_abdominal_MR.py
-
-.
-└── FLARE24/Style_Translation
-    └──datasets
-            ├── CT_2d
-            ├── CT_2d_label
-            └── MR_2d
-```
-
+- Please go to ["./datasets/README.md"](datasets/README.md) for details.
 
 ## 2. Environment
 
@@ -36,13 +14,11 @@ python Style_Translation/data/prepare_data_for_abdominal_MR.py
 - Train stage one image-to-image translation model for style transfer
 
 ```bash
-python stage_1_i2i_train.py --name sourceAtotargetB
+python stage_1_i2i_train.py --source_path '/mnt16t/FLARE24/Dataset/CT_2d' --target_path '/mnt16t/FLARE24/Dataset/MR_2d'
 ```
 
-- Generate target-like source domain images
-
 ```bash
-python stage_1.5_i2i_inference.py --ckpt_path YOUR_PATH --source_npy_dirpath SOURCE_PATH --target_npy_dirpath TARGET_PATH --save_dirpath SAVE_PATH --k_means_clusters 6
+python stage_1.5_i2i_inference.py --ckpt_path YOUR_PATH --source_npy_dirpath SOURCE_PATH --target_npy_dirpath TARGET_PATH --save_nii_dirpath SAVE_PATH 
 ```
 
 

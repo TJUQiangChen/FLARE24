@@ -5,7 +5,9 @@ wandb
 .idea
 /datasets
 /checkpoints_dir
+/checkpoint_pth
 /result
 /Style_Translation/datasets
 /Style_Translation/checkpoints_dir
 /Style_Translation/sourceAtotargetB
+/Style_Translation/result

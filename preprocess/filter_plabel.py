@@ -78,19 +78,11 @@ def process_fake_labels(input_dir, reference_summary, output_csv):
     for file_name in tqdm(os.listdir(input_dir)):
         if file_name.endswith(".nii.gz"):
             file_path = os.path.join(input_dir, file_name)
-
             image = nib.load(file_path)
-
             target_spacing = np.array([1, 1, 1])
             resized_image = resize_image(image, target_spacing)
-
-
             stats = calculate_voxel_statistics(resized_image)
-
-
             anomalies = check_voxel_counts(stats, reference_summary)
-
-
             if anomalies != {}:
                 result = {"file_name": file_name, "anomalies": anomalies}
                 results.append(result)

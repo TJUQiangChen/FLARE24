@@ -94,7 +94,7 @@ def preprocess_amos_datset_plabel(
         if filter_file is not None:
             if file_idx in filter_file:
                 print("{} has being filt!".format(file_idx))
-                continue
+                continue #测试时注释，测试完成后打开
             train_image_path = os.path.join(origin_image_path, images_file)
             output_image_file_name = os.path.basename(train_image_path)
             lable_path = os.path.join(
@@ -139,10 +139,18 @@ def preprocess_lld_datset_plabel(
         pair_Dict = json.loads(f.read())
 
     if filter_path is not None:
-        df = pd.read_csv(filter_path)
-        filter_file = [
-            f.split(".")[0].replace("LLD_", "") for f in df["file_name"].tolist()
-        ]
+        try:
+            df = pd.read_csv(filter_path)
+            if len(df) > 0:
+                filter_file = [
+                    f.split(".")[0].replace("LLD_", "") for f in df["file_name"].tolist()
+                ]
+            else:
+                print(f"Warning: CSV file {filter_path} is empty, skipping filtering")
+                filter_file = None
+        except pd.errors.EmptyDataError:
+            print(f"Warning: CSV file {filter_path} is empty, skipping filtering") 
+            filter_file = None
     else:
         filter_file = None
 
@@ -156,7 +164,7 @@ def preprocess_lld_datset_plabel(
         if filter_file is not None:
             if image_id in filter_file:
                 print("{} has being filt!".format(image_id))
-                continue
+                continue #测试时注释，测试完成后打开
         if "LLD_" in os.listdir(temp_output_label_path)[0]:
             lable_path = os.path.join(
                 temp_output_label_path, "LLD_{}.nii.gz".format(int(image_id))

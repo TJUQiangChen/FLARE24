@@ -4,32 +4,31 @@ import os
 from tqdm import tqdm
 
 
-def regis_data(input_root, delay_root, save_root):
-    # Create a folder named 'C+delay' (referred to as delay_root), and place all delay modality data into this folder. \
-    # Place all other modalities into another folder named 'input' (referred to as input_root).
+def regis_data(input_root,save_root):
     if not os.path.exists(save_root):
         os.makedirs(save_root)
 
     for image_name in tqdm(os.listdir(input_root)):
-        save_path = os.path.join(save_root, image_name)
-        move_path = os.path.join(input_root, image_name)
+        if 'Delay' not in image_name:
+            save_path = os.path.join(save_root, image_name)
+            move_path = os.path.join(input_root, image_name)
 
-        if os.path.exists(save_path):
-            print("have been run, skip")
-        else:
-            print("begin regis:", image_name)
+            if os.path.exists(save_path):
+                print("have been run, skip")
+            else:
+                print("begin regis:", image_name)
 
-            modality = image_name.split("_")[2]
-            fix_name = image_name.replace(modality, "C+Delay")
-            fix_path = os.path.join(delay_root, fix_name)
-            try:
-                fix_img = ants.image_read(fix_path)
-                move_img = ants.image_read(move_path)
-                outs = ants.registration(fix_img, move_img, type_of_transforme="Syn")
-                reg_img = outs["warpedmovout"]
-                ants.image_write(reg_img, save_path)
-                print(f"finish: {image_name}")
+                modality = image_name.split("_")[2]
+                fix_name = image_name.replace(modality, "C+Delay")
+                fix_path = os.path.join(input_root, fix_name)
+                try:
+                    fix_img = ants.image_read(fix_path)
+                    move_img = ants.image_read(move_path)
+                    outs = ants.registration(fix_img, move_img, type_of_transforme="Syn")
+                    reg_img = outs["warpedmovout"]
+                    ants.image_write(reg_img, save_path)
+                    print(f"finish: {image_name}")
 
-            except Exception as e:
-                print(f"find {image_name} err: {str(e)}")
-                continue
+                except Exception as e:
+                    print(f"find {image_name} err: {str(e)}")
+                    continue

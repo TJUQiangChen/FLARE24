@@ -13,9 +13,9 @@ import matplotlib.pyplot as plt
 parser = argparse.ArgumentParser()
 parser.add_argument('--name', type=str, default='version11')
 parser.add_argument('--seed', type=int, default=10)
-parser.add_argument('--A_root', type=str, default='/mnt16t_ext/dinghaoyu/FLARE24/Style_Translation/datasets/CT_2d')
-parser.add_argument('--B_root', type=str, default='/mnt16t_ext/dinghaoyu/FLARE24/Style_Translation/datasets/MR_2d')
-parser.add_argument('--batch_size', type=int, default=4)
+parser.add_argument('--source_path', type=str, default='/mnt16t/FLARE24/Dataset/CT_2d')
+parser.add_argument('--target_path', type=str, default='/mnt16t/FLARE24/Dataset/MR_2d')
+
 opts = parser.parse_args()
 
 torch.backends.cudnn.enabled = True
@@ -45,8 +45,8 @@ def dice_loss_chill(output, gt):
 if __name__ == '__main__':
     check_manual_seed(opts.seed)
     create_dirs(opts.name)
-    train_loader = DataLoader(dataset=I2IDataset(train=True,A_root=opts.A_root,B_root=opts.B_root), batch_size=opts.batch_size, shuffle=True, drop_last=True, num_workers=0, pin_memory=True)
-    validation_loader = DataLoader(dataset=I2IDataset(train=False), batch_size=1, shuffle=False, drop_last=False, num_workers=0, pin_memory=True)
+    train_loader = DataLoader(dataset=I2IDataset(opts, train=True), batch_size=4, shuffle=True, drop_last=True, num_workers=0, pin_memory=True)
+    validation_loader = DataLoader(dataset=I2IDataset(opts, train=False), batch_size=1, shuffle=False, drop_last=False, num_workers=0, pin_memory=True)
     trainer = i2iSolver(opts)
     trainer.cuda()
     iteration=0
