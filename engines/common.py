@@ -493,7 +493,6 @@ class Inference(object):
                             ),
                             soft_weight_image.half().cpu().numpy(),
                         )
-                    print(f"{image_id} Done")
 
         torch.cuda.synchronize()
         t_end = time.time()

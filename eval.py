@@ -70,6 +70,7 @@ if __name__ == '__main__':
                              "Missing volume: {}".format(submission_volume_path))
         print("Found corresponding submission file {} for reference file {}"
               "".format(reference_volume_fn, submission_volume_path))
+        print('-'*50)
 
         # Load reference and submission volumes with Nibabel.
         reference_volume = nb.load(reference_volume_fn)

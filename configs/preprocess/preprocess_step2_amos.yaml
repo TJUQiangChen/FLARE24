@@ -7,7 +7,7 @@ MR_DATA_PREPROCESS:
   TEMP_MR_RAW_DATA_PATH:  "MR/Training/AMOS_MR_good_spacing-833" # filter C+Delay data
   DATA_PAIR_PATH: "MR/Training/preprocess_data_pair" # using symlink and rename to save Hard Disk Space. it's recoder source filename and symlink name pair. it's json file path.
   TEMP_PREPROCESSED_PSUEDO_LABEL_PATH: "MR/Training/PLabel/AMOS_MR_good_spacing-833_tmp_demo" # test
-  CT_GT_PATH: "CT/CT_label_300"
+  CT_GT_PATH: "CT/CT_label"
   OUTPUT_EACH_CT_LABELS_NUM_STATIC_PATH: 'static_info/label_class_static_demo.csv'
   FILTER_CASE_SAVE_PATH: "static_info/filter_plabel_amos_demo.csv" # save filtered case infos . it's csv file path.
   BAD_CASE_PATH: 'MR/Training/preprocess_data_pair/amos_demo.json' # preprocessed fail case file. it's json file path.

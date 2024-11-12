@@ -39,7 +39,8 @@ class flare22_dataset(Dataset):
         self.unlab_data_path = unlab_data_path
         self.pool_op_kernel_sizes = pool_op_kernel_sizes
         self.num_each_epoch = num_each_epoch
-        self.series_ids = subfiles(data_path, join=False, suffix="npz")
+        self.series_ids = [file for file in os.listdir(data_path) if file.endswith('.npz')]
+        # self.series_ids = subfiles(data_path, join=False, suffix="npz") # 用这个读不到数据
         self.setup_DA_params()
 
         self.transforms = self.get_augmentation(

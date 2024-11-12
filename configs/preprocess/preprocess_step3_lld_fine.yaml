@@ -1,8 +1,7 @@
 BASE: ["preprocess_step2_lld.yaml"]
-
+VERSION: "preprocess_step3_lld_fine"
 # final stage
 DATASET:
-  BASE_DIR: "/ChenQiang/DataSet/Medical/MICCAI24_FLARE/Dataset"
   TRAIN_IMAGE_PATH: 'MR/Training/PLabel_image/LLD-MMRI-3984'   # set preprocessed data save path
   TRAIN_MASK_PATH: 'MR/Training/PLabel/LLD-MMRI-3984' # set preprocessed data lable save path
   IS_ABDOMEN_CROP: False

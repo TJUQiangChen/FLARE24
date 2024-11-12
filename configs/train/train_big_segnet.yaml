@@ -4,9 +4,8 @@ DATASET:
   DATASET_NAME: 'CT_fakeMR'
   FINE:
     SPLIT_PREPROCESS_PATH: [
-      'processed_data/fine/big_segnet/ct300',
-      'processed_data/fine/big_segnet/MR_lld',
-      'processed_data/fine/big_segnet/MR_amos',
+      'processed_data/fine/big_segnet/ct',
+      'processed_data/fine/big_segnet/FakeMR'
     ]
     PROPRECESS_PATH: "processed_data/fine/combined_data/big_segnet"
 

@@ -9,12 +9,12 @@ INFERENCE:
   IS_OVERWRITE_PREDICT_MASK: True
   SAVE_SOFTMAX: False
 
-VERSION: "preprocess_step1_CT"
+VERSION: "preprocess_step1_FakeMR"
 
 # final stage
 DATASET:
-  TRAIN_IMAGE_PATH: 'CT/CT_image'
-  TRAIN_MASK_PATH: 'CT/CT_label'
+  TRAIN_IMAGE_PATH: 'CT/CT2MR_image'
+  TRAIN_MASK_PATH: 'CT/CT2MR_label'
   IS_ABDOMEN_CROP: False
   FINE:
-    PROPRECESS_PATH: "processed_data/fine/big_segnet/ct"
+    PROPRECESS_PATH: "processed_data/fine/big_segnet/FakeMR"

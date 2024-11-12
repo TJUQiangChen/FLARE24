@@ -29,8 +29,8 @@ from utils.common_function import (crop_bbox_by_stand_spacing, load_checkpoint,
                                    parse_option)
 
 
-def run_prepare_data(config, is_overwrite, is_multiprocessing=True):
-    data_prepare = model_train_data_process(config, is_overwrite)
+def run_prepare_data(config, is_multiprocessing=True):
+    data_prepare = model_train_data_process(config)
     if is_multiprocessing:
         pool = Pool(int(cpu_count() * 0.3))
         for data in data_prepare.data_list:
@@ -51,14 +51,15 @@ def run_prepare_data(config, is_overwrite, is_multiprocessing=True):
 
 
 class model_train_data_process(object):
-    def __init__(self, config, is_overwrite=True):
+    def __init__(self, config):
         self.config = config
         self.train_type = self.config.TRAINING_TYPE
+        print(self.train_type)
         self.coarse_size = self.config.DATASET.COARSE.PREPROCESS_SIZE
         self.fine_size = self.config.DATASET.FINE.PREPROCESS_SIZE
         self.nor_dir = self.config.DATASET.IS_NORMALIZATION_DIRECTION
         self.extend_size = self.config.DATASET.EXTEND_SIZE
-
+ 
         self.image_path = os.path.join(
             config.DATASET.BASE_DIR, config.DATASET.TRAIN_IMAGE_PATH
         )
@@ -71,12 +72,8 @@ class model_train_data_process(object):
         self.preprocess_fine_path = os.path.join(
             config.DATASET.BASE_DIR, config.DATASET.FINE.PROPRECESS_PATH
         )
-        self.data_list = subfiles(self.image_path, join=False, suffix="nii.gz")
-        if is_overwrite and isdir(self.preprocess_coarse_path):
-            shutil.rmtree(self.preprocess_coarse_path)
+        self.data_list = os.listdir(self.image_path)
         os.makedirs(self.preprocess_coarse_path, exist_ok=True)
-        if is_overwrite and isdir(self.preprocess_fine_path):
-            shutil.rmtree(self.preprocess_fine_path)
         os.makedirs(self.preprocess_fine_path, exist_ok=True)
         self.is_abdomen_crop = config.DATASET.IS_ABDOMEN_CROP
 
@@ -84,8 +81,7 @@ class model_train_data_process(object):
         is_softmax_exists = False
         data_id = image_id.split("_0000.nii.gz")[0]
         image, image_spacing, image_direction, image_itk_info = load_data(
-            join(self.image_path, data_id + "_0000.nii.gz")
-        )
+            join(self.image_path, data_id + "_0000.nii.gz"))
         mask, _, mask_direction, label_itk_info = load_data(
             join(self.mask_path, data_id + ".nii.gz")
         )
@@ -119,7 +115,6 @@ class model_train_data_process(object):
                     softmax_image[s_i] = change_axes_of_image(
                         softmax_image[s_i], mask_direction
                     )
-
         if "coarse" in self.train_type:
             data_info = OrderedDict()
             data_info["raw_shape"] = image.shape
@@ -162,7 +157,6 @@ class model_train_data_process(object):
                     )
                     new_crop_image.append(crop_softmax_image_tmp)
                 crop_softmax_image = np.array(new_crop_image)
-
         else:
             crop_image = image
             crop_mask = mask
@@ -217,7 +211,7 @@ class model_train_data_process(object):
 if __name__ == "__main__":
     _, config = parse_option("other")
 
-    data_root_path = config.MR_DATA_PREPROCESS.ROOT_PATH
+    data_root_path = config.MR_DATA_PREPROCESS.ROOT_PATH  # /datasets
     preprocess_stage = config.MR_DATA_PREPROCESS.STAGE
     if "LLD-MMRI" in config.MR_DATA_PREPROCESS.MR_RAW_DATA_PATH:
         data_set_name = "lld"
@@ -297,12 +291,10 @@ if __name__ == "__main__":
                 config.MR_DATA_PREPROCESS.ROOT_PATH,
                 config.MR_DATA_PREPROCESS.REGIS.OUTPUT_PATH,
             )
-            if not os.path.exists(config.MR_DATA_PREPROCESS.REGIS.OUTPUT_PATH):
-                regis_data(
-                    origin_image_path,
-                    origin_image_path,
-                    regis_data_output_path,
-                )
+            regis_data(
+                origin_image_path,
+                regis_data_output_path,
+            )
             print("stage3:Registration lld data")
         # # # 4 filter plabel
         # # ############################ stage3 ############################
@@ -368,6 +360,6 @@ if __name__ == "__main__":
                 output_image_path,
                 filter_path,
             )
-
     # 6.Preprocess the data required for model generation
-    run_prepare_data(config, True, True)
+    run_prepare_data(config, True)
+
