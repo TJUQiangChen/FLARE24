@@ -43,8 +43,8 @@ python prepare_data_for_abdominal_MR_3d.py \
 
 ## Finally, CT to MR Dataset save path
 ```bash
-CT2MR_Image: '/mnt16t_ext/dinghaoyu/FLARE24/datasets/CT/CT2MR_image'
-CT2MR_Label: '/mnt16t_ext/dinghaoyu/FLARE24/datasets/CT/CT2MR_label'
+CT2MR_Image: '../datasets/CT/CT2MR_image'
+CT2MR_Label: '../datasets/CT/CT2MR_label'
 ```
 
 ## 2. Environment
