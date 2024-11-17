@@ -5,10 +5,10 @@ COARSE_MODEL_PATH: "checkpoints_dir" # The path of the downloaded checkpoint dir
 COARSE_CHECK_POINT_NAME: "coarse_checkpoint.pth"
 
 MR_DATA_PREPROCESS:
-  ROOT_PATH: "/mnt16t_ext/dinghaoyu/FLARE24/datasets" # The path of the current project datasets directory. please use absolute path!!! because we use symlink
+  ROOT_PATH: "/xxxx/FLARE24/datasets" # The path of the current project datasets directory. please use absolute path!!! because we use symlink
 
 DATASET:
-  BASE_DIR: "/mnt16t_ext/dinghaoyu/FLARE24/datasets"  # The path of the current project datasets directory. please use absolute path!!! because we use symlink
+  BASE_DIR: "/xxxx/FLARE24/datasets"  # The path of the current project datasets directory. please use absolute path!!! because we use symlink
 
 VAL:
   TTA: False

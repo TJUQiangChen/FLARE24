@@ -1,6 +1,6 @@
-# 🔥 FLARE24 Solution
+# 🏆 Champion Solution for FLARE24-Task3
 
-This repository is the official implementation of [A 3D Unsupervised Domain Adaption Framework Combining Style Translation and Self-Training for Abdominal Organs Segmentation](https://openreview.net/forum?id=oSbUYnIDs9&referrer=%5BAuthor%20Console%5D(%2Fgroup%3Fid%3DMICCAI.org%2F2024%2FChallenge%2FFLARE%2FAuthors%23your-submissions)) of Team tju_vil_pioneers on FLARE24 challenge.
+This repository is the official implementation of [A 3D Unsupervised Domain Adaption Framework Combining Style Translation and Self-Training for Abdominal Organs Segmentation](https://drive.google.com/file/u/0/d/1UODk2-tAl_mLYYYY6qp_WqvLvDxrznNv/view?usp=sharing&pli=1) of Team tju_vil_pioneers on FLARE24 challenge.
 
 ## 🔍 Overview
 This work addresses the challenge of adapting CT-trained segmentation models to MR images by generating synthetic MR data, employing self-training strategies, and a two-stage segmentation framework in the FLARE24 dataset. For more details, see the pipeline diagram below:
@@ -64,25 +64,44 @@ The CT scans are from the FLARE 2022 dataset where 50 cases have ground-truth la
 
 ## 🪄 Preprocessing
 
-We have included multiple preprocessing steps based on the model training phase.
-For the first phase, we only use CT data and domain transfer data.
+Our preprocessing pipeline consists of three main steps:
 
-For Step 1 Domain Translation
-```
-Domain Translation code will comming soon
+### Step 1: CT and Synthetic MR Data Preprocessing
+This step preprocesses the original CT data and fake MR data generated through style translation:
+> Note1: Before preprocess, please refer to ["Style_Translation/README.md"](Style_Translation/README.md) for style translation detailed information.
 
-# For original CT images, you can use the following command for data preprocessing (for images after domain transfer, refer to the config to modify the path for data preprocessing)
+> Note2: Before starting the preprocessing pipeline, please modify the data and file paths in `preprocess/preprocess_base.yaml`. You need to update:
+- `MR_DATA_PREPROCESS.ROOT_PATH`: The absolute path to your datasets directory
+- `DATASET.BASE_DIR`: The absolute path to your datasets directory 
+- `FINE_MODEL_PATH` and `COARSE_MODEL_PATH`: The paths to your downloaded checkpoint directories
 
+```bash
+# Process original CT data
 python ./preprocess/data_preprocess.py --cfg ./configs/preprocess/preprocess_step1_CT.yaml
+
+# Process style translation fake MR data
+python ./preprocess/data_preprocess.py --cfg ./configs/preprocess/preprocess_step1_FakeMR.yaml
 ```
-For Step 2 self-Training Strategy and Step 3 Two-Stage Segmentation preprocess model trained data.
-It includes pseudo label generation, registration, data filtering, and data preprocessing.
-```
+
+### Step 2: MR Data Preprocessing and Pseudo-label Generation
+This step handles two MR datasets (AMOS and LLD), including data filtering, registration, and pseudo-label generation:
+```bash
+# Process AMOS MR dataset
 python ./preprocess/data_preprocess.py --cfg ./configs/preprocess/preprocess_step2_amos.yaml
 
+# Process LLD MR dataset
 python ./preprocess/data_preprocess.py --cfg ./configs/preprocess/preprocess_step2_lld.yaml
 ```
-Now you can train your models.
+
+### Step 3: Fine Segmentation Data Preprocessing
+This step prepares data for the fine segmentation stage by adjusting patch size to [96,192,192]:
+```bash
+# Process AMOS MR dataset
+python ./preprocess/data_preprocess.py --cfg ./configs/preprocess/preprocess_step3_amos_fine.yaml
+
+# Process LLD MR dataset
+python ./preprocess/data_preprocess.py --cfg ./configs/preprocess/preprocess_step3_lld_fine.yaml
+```
 
 # 🖥️ Train
 

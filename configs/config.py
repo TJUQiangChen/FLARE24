@@ -40,7 +40,7 @@ _C.WANDB.MODE = "offline"
 _C.MR_DATA_PREPROCESS = CN()
 #  preprocess
 _C.MR_DATA_PREPROCESS.STAGE = 1
-_C.MR_DATA_PREPROCESS.ROOT_PATH = ""
+_C.MR_DATA_PREPROCESS.ROOT_PATH = "" # must set absoulate path
 _C.MR_DATA_PREPROCESS.MR_RAW_DATA_PATH = ""
 _C.MR_DATA_PREPROCESS.PSUEDO_LABEL_PATH = ""  # inference psuedo label path
 _C.MR_DATA_PREPROCESS.TEMP_MR_RAW_DATA_PATH = ""  # filter C+Delay data
@@ -74,7 +74,7 @@ _C.MR_DATA_PREPROCESS.IS_LLD_REGIS_DATA = False
 # -----------------------------------------------------------------------------
 _C.DATASET = CN()
 _C.DATASET.WITH_VAL = False
-_C.DATASET.BASE_DIR = ""
+_C.DATASET.BASE_DIR = "" # must set absoulate path
 _C.DATASET.DATASET_NAME = "base"
 
 _C.DATASET.TRAIN_UNLABELED_IMAGE_PATH = (
