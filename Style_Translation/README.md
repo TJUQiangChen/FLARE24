@@ -3,7 +3,49 @@ The codes for the work "A 3D Unsupervised Domain Adaption Framework Combining St
 
 ## 1. Prepare data
 
-- Please go to ["./datasets/README.md"](datasets/README.md) for details.
+## Prerequisites
+1. Respacing the source and target domain images (both should be gray) with the same XY plane resolutions, and crop/pad to the size of [512, 512, d] in terms of [width, height, depth].
+
+2. Normalize each 3D images to [0, 1], and extract 2D slices from 3D volumes along depth-axis.
+
+3. Stack the list of 2D slices at zero dimension for the two domains respectively, resulting in 3D tensor with size of [N, 512, 512].
+
+## Prepare Style Translation Training Samples
+```bash
+# Prepare CT training data
+python prepare_data_for_abdominal_CT_2d.py \
+    --data_root '../datasets/CT/CT_image' \
+    --label_root '../datasets/CT/CT_label' \
+    --save_path '../datasets/CT/ST_CT_2d'
+
+# Prepare MR training data
+python prepare_data_for_abdominal_MR_2d.py \
+    --AMOS_root '../datasets/MR/Training/AMOS_MR_good_spacing-833' \
+    --LLD_root '../datasets/MR/Training/LLD-MMRI-3984' \
+    --save_path '../datasets/MR/Training/ST_MR_2d'
+```
+
+## Prepare Style Translation Inference Samples
+```bash
+# Prepare CT inference data
+python prepare_data_for_abdominal_CT_3d.py \
+    --data_root '../datasets/CT/CT_image' \
+    --label_root '../datasets/CT/CT_label' \
+    --save_img_path '../datasets/CT/ST_CT_3d/CT_3d_img_npy' \
+    --save_lb_path '../datasets/CT/CT2MR_label'
+
+# Prepare MR inference data
+python prepare_data_for_abdominal_MR_3d.py \
+    --AMOS_root '../datasets/MR/Training/AMOS_MR_good_spacing-833' \
+    --LLD_root '../datasets/MR/Training/LLD-MMRI-3984' \
+    --save_path '../datasets/MR/Training/ST_MR_3d'
+```
+
+## Finally, CT to MR Dataset save path
+```bash
+CT2MR_Image: '/mnt16t_ext/dinghaoyu/FLARE24/datasets/CT/CT2MR_image'
+CT2MR_Label: '/mnt16t_ext/dinghaoyu/FLARE24/datasets/CT/CT2MR_label'
+```
 
 ## 2. Environment
 
