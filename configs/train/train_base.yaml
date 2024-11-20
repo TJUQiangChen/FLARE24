@@ -7,7 +7,7 @@ FINETUNE: False
 
 DATASET:
   DATASET_NAME: 'Raw'
-  BASE_DIR: "/mnt16t_ext/dinghaoyu/FLARE24/datasets" # The path of the current project datasets directory. # please use absolute path!!! because we use symlink
+  BASE_DIR: "/xxx/FLARE24/datasets" # The path of the current project datasets directory. # please use absolute path!!! because we use symlink
   DA:
     DO_MIRROR: True
 

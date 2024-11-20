@@ -26,6 +26,21 @@ pip install -r requirements.txt
 ```
 pip install torch==1.12.0+cu113 --extra-index-url https://download.pytorch.org/whl/cu113
 ```
+
+## ⚠️ Important Notice
+
+Before starting any training or inference, make sure to modify the base paths in all configuration files:
+
+1. Modify the base paths in `configs/xxx/xxx_base.yaml`:  xxx includes `preprocess`, `train`, `inference`, etc.
+```yaml
+DATASET:
+  BASE_DIR: "your/path/to/datasets"  # Dataset root directory
+```
+
+2. All training and inference configuration files inherit from `base.yaml`, so this step is mandatory.
+
+3. Please ensure to use absolute paths instead of relative paths to avoid potential path resolution issues.
+
 ## 💾 Dataset
 The training Data and validation data are provided by the [FLARE24](https://www.codabench.org/competitions/2296/). In short, there are 2300 partial labeled CT and 4000+ unlabeled MR data for training, 110 public cases for validation and 300 hidden cases for the final test. 
 
@@ -103,13 +118,14 @@ python ./preprocess/data_preprocess.py --cfg ./configs/preprocess/preprocess_ste
 python ./preprocess/data_preprocess.py --cfg ./configs/preprocess/preprocess_step3_lld_fine.yaml
 ```
 
-# 🖥️ Train
+## 🖥️ Train
 
-1. Training our model consists of several main steps, as depicted in the pipeline figure above. Follow these instructions to conduct the training process effectively:
+Training our model consists of several main steps, as depicted in the pipeline figure above. Follow these instructions to conduct the training process effectively:
 
-### Step 1: Training Domin transfer
+### Step 1: Domain Translation
+Before training the segmentation models, we first translate the source domain images to target domain using CycleGAN.
 
-- Train stage one image-to-image translation model for style transfer
+- Train stage one image-to-image translation model for domain translation
 ```bash
 python stage_1_i2i_train.py --name sourceAtotargetB
 ```
@@ -118,13 +134,13 @@ python stage_1_i2i_train.py --name sourceAtotargetB
 python stage_1.5_i2i_inference.py --ckpt_path YOUR_PATH --source_npy_dirpath SOURCE_PATH --target_npy_dirpath TARGET_PATH --save_npy_dirpath SAVE_PATH --k_means_clusters 6
 ```
 
-### Step 2: Training Big SegNet
+### Step 2: Big SegNet Training
 
 ```bash
 python train.py --cfg ./configs/train/train_big_segnet.yaml
 ```
 
-### Step 3: Training Small SegNet
+### Step 3: Small SegNet Training
 
 ```bash
 # coarse stage
@@ -137,7 +153,7 @@ python train.py --cfg train_small_segnet_fine_stage.yaml
 #### You can download trained models here:
 [BaiduNetDisk](https://pan.baidu.com/s/1oPLEmcTFZxjvTHijNW8Byg?pwd=67vi)
 
-2. To fine-tune the model on a customized dataset, run this command: An example of small_segnet_fine_stage
+To fine-tune the model on a customized dataset, run this command: An example of small_segnet_fine_stage
 
 ```bash
 python train.py --cfg train_small_segnet_fine_stage_fintune.yaml
@@ -167,7 +183,7 @@ Our method achieves the following performance on [FLARE24](https://www.codabench
 | Dataset Name       | DSC(%) | NSD(%) |
 |--------------------|:------:|:------:|
 | Validation Dataset | 79.42% | 86.46% |
-| Test Dataset       |   ?    |   ？    |
+| Test Dataset       | (?) | (?) |
 
 ## 🎆 Contributing
 This project is licensed under the [Apache License 2.0](LICENSE), and please adhere to the licenses of the models and datasets used.
