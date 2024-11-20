@@ -11,3 +11,4 @@ wandb
 /Style_Translation/sourceAtotargetB
 /Style_Translation/result
 .DS_Store
+*.pth
