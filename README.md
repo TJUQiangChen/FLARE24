@@ -176,6 +176,28 @@ To compute the evaluation metrics, run:
 python eval.py --cfg ./configs/eval/eval_small_segnet.yaml
 ```
 
+## 📋 Docker
+
+To run the inference using Docker, use the following command:
+
+> Note: This is the official inference script. When running predictions, please replace `/data/js/inputs/` and `/data/js/outputs/` with your own input and output directories. The input MR images must be in `.nii.gz` format.
+
+```bash
+docker container run --gpus "device=0" \
+    -m 28G \
+    --name tju_vil_pioneers \
+    --rm \
+    -v /data/js/inputs/:/workspace/inputs/ \
+    -v /data/js/outputs/:/workspace/outputs/ \
+    tju_vil_pioneers:latest /bin/bash -c "sh predict.sh"
+```
+
+You can download the Docker image from:
+
+Docker Container download link [BaiduNetDisk](https://pan.baidu.com/s/1kP8i1RnzMK4coFvjymWHHQ) 
+
+Extraction code: o9za
+
 ## 📋 Results
 
 Our method achieves the following performance on [FLARE24](https://www.codabench.org/competitions/2296/)
